@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="puga_action_action" resource="default" engine="innodb" comment="Action">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Action ID"/>
+        <column xsi:type="int" name="is_active" padding="5" unsigned="true" nullable="false"
+                identity="false" default="0" comment="Action is active"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="32" default="simple" comment="Action name"/>
+        <column xsi:type="varchar" name="description" nullable="true" length="64" comment="Action description"/>
+        <column xsi:type="varchar" name="short_description" nullable="true" length="64" comment="Action short description"/>
+        <column xsi:type="varchar" name="image" length="255" nullable="false" comment="Action image"/>
+        <column xsi:type="timestamp" name="create_datetime" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Action Created"/>
+        <column xsi:type="timestamp" name="start_datetime" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Action Start"/>
+        <column xsi:type="timestamp" name="end_datetime" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Action End"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>
