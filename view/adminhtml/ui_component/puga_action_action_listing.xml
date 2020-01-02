@@ -21,8 +21,8 @@
             <action name="delete">
                 <settings>
                     <confirm>
-                        <message translate="true">Delete selected items?</message>
-                        <title translate="true">Delete items</title>
+                        <message translate="true">Delete selected action?</message>
+                        <title translate="true">Delete action</title>
                     </confirm>
                     <url path="catalog/product/massDelete"/>
                     <type>delete</type>
@@ -51,63 +51,9 @@
                     </actions>
                 </settings>
             </action>
-            <action name="attributes">
-                <settings>
-                    <url path="catalog/product_action_attribute/edit"/>
-                    <type>attributes</type>
-                    <label translate="true">Update attributes</label>
-                </settings>
-            </action>
         </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>
-    <!--<listingToolbar name="listing_top">-->
-        <!--<argument name="data" xsi:type="array">-->
-            <!--<item name="config" xsi:type="array">-->
-                <!--<item name="sticky" xsi:type="boolean">true</item>-->
-            <!--</item>-->
-        <!--</argument>-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<bookmark name="bookmarks"/>-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<columnsControls name="columns_controls"/>-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<filterSearch name="fulltext"/>-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<filters name="listing_filters" />-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<massaction name="listing_massaction">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="component" xsi:type="string">Magento_Ui/js/grid/tree-massactions</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-            <!--<action name="delete">-->
-                <!--<argument name="data" xsi:type="array">-->
-                    <!--<item name="config" xsi:type="array">-->
-                        <!--<item name="type" xsi:type="string">delete</item>-->
-                        <!--<item name="label" xsi:type="string" translate="true">Delete</item>-->
-                        <!--<item name="url" xsi:type="url" path="puga_action/puga/massDelete"/>-->
-                        <!--<item name="confirm" xsi:type="array">-->
-                            <!--<item name="title" xsi:type="string" translate="true">Delete Post</item>-->
-                            <!--<item name="message" xsi:type="string" translate="true">Are you sure you wan't to delete selected items?</item>-->
-                        <!--</item>-->
-                    <!--</item>-->
-                <!--</argument>-->
-            <!--</action>-->
-        <!--</massaction>-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<paging name="listing_paging"/>-->
-    <!--</listingToolbar>-->
-    <!--<listingToolbar name="listing_top">-->
-        <!--<exportButton name="export_button"/>-->
-    <!--</listingToolbar>-->
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">puga_action_action_listing.puga_action_action_listing_data_source</item>
@@ -119,7 +65,7 @@
                 <item name="name" xsi:type="string">add</item>
                 <item name="label" xsi:type="string" translate="true">Create New Action</item>
                 <item name="class" xsi:type="string">primary</item>
-                <item name="url" xsi:type="string">*/*/new</item>
+                <item name="url" xsi:type="string">*/*/newAction</item>
             </item>
         </item>
     </argument>
@@ -141,12 +87,24 @@
         </argument>
     </dataSource>
     <columns name="spinner_columns">
+        <settings>
+            <childDefaults>
+                <param name="fieldAction" xsi:type="array">
+                    <item name="provider" xsi:type="string">puga_action_action_listing.puga_action_action_listing.puga_columns.actions</item>
+                    <item name="target" xsi:type="string">applyAction</item>
+                    <item name="params" xsi:type="array">
+                        <item name="0" xsi:type="string">edit</item>
+                        <item name="1" xsi:type="string">${ $.$data.rowIndex }</item>
+                    </item>
+                </param>
+            </childDefaults>
+        </settings>
         <selectionsColumn name="ids">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="resizeEnabled" xsi:type="boolean">false</item>
                     <item name="resizeDefaultWidth" xsi:type="string">55</item>
-                    <item name="indexField" xsi:type="string">post_id</item>
+                    <item name="indexField" xsi:type="string">id</item>
                 </item>
             </argument>
         </selectionsColumn>
@@ -159,20 +117,20 @@
                 </item>
             </argument>
         </column>
-        <!--<column name="name">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="filter" xsi:type="string">text</item>-->
-                    <!--<item name="editor" xsi:type="array">-->
-                        <!--<item name="editorType" xsi:type="string">text</item>-->
-                        <!--<item name="validation" xsi:type="array">-->
-                            <!--<item name="required-entry" xsi:type="boolean">true</item>-->
-                        <!--</item>-->
-                    <!--</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Name</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</column>-->
+        <column name="name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">text</item>
+                    <item name="editor" xsi:type="array">
+                        <item name="editorType" xsi:type="string">text</item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">true</item>
+                        </item>
+                    </item>
+                    <item name="label" xsi:type="string" translate="true">Action Name</item>
+                </item>
+            </argument>
+        </column>
         <!--<column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date">-->
             <!--<argument name="data" xsi:type="array">-->
                 <!--<item name="config" xsi:type="array">-->
