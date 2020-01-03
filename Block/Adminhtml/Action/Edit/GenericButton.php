@@ -6,7 +6,7 @@
 namespace Puga\Action\Block\Adminhtml\Action\Edit;
 
 use Magento\Backend\Block\Widget\Context;
-use Magento\Cms\Api\BlockRepositoryInterface;
+use Puga\Action\Model\Action;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
@@ -20,31 +20,31 @@ class GenericButton
     protected $context;
 
     /**
-     * @var BlockRepositoryInterface
+     * @var Action
      */
     protected $blockRepository;
 
     /**
      * @param Context $context
-     * @param BlockRepositoryInterface $blockRepository
+     * @param Action $blockRepository
      */
     public function __construct(
         Context $context,
-        BlockRepositoryInterface $blockRepository
+        Action $blockRepository
     ) {
         $this->context = $context;
         $this->blockRepository = $blockRepository;
     }
 
     /**
-     * Return CMS block ID
+     * Return Action ID
      *
      * @return int|null
      */
-    public function getBlockId()
+    public function getActionId()
     {
         try {
-            return $this->blockRepository->getById(
+            return $this->blockRepository->load(
                 $this->context->getRequest()->getParam('id')
             )->getId();
         } catch (NoSuchEntityException $e) {

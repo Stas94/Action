@@ -27,7 +27,7 @@ class SaveButton extends GenericButton implements ButtonProviderInterface
                     'buttonAdapter' => [
                         'actions' => [
                             [
-                                'targetName' => 'cms_page_form.cms_page_form',
+                                'targetName' => 'puga_action_action_form.puga_action_action_form',
                                 'actionName' => 'save',
                                 'params' => [
                                     false
@@ -52,28 +52,6 @@ class SaveButton extends GenericButton implements ButtonProviderInterface
     {
         $options = [
             [
-                'label' => __('Save & Duplicate'),
-                'id_hard' => 'save_and_duplicate',
-                'data_attribute' => [
-                    'mage-init' => [
-                        'buttonAdapter' => [
-                            'actions' => [
-                                [
-                                    'targetName' => 'cms_page_form.cms_page_form',
-                                    'actionName' => 'save',
-                                    'params' => [
-                                        true,
-                                        [
-                                            'back' => 'duplicate'
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            [
                 'id_hard' => 'save_and_close',
                 'label' => __('Save & Close'),
                 'data_attribute' => [
@@ -81,7 +59,7 @@ class SaveButton extends GenericButton implements ButtonProviderInterface
                         'buttonAdapter' => [
                             'actions' => [
                                 [
-                                    'targetName' => 'cms_page_form.cms_page_form',
+                                    'targetName' => 'puga_action_action_form.puga_action_action_form',
                                     'actionName' => 'save',
                                     'params' => [
                                         true

@@ -15,16 +15,14 @@
                 </settings>
             </filterSelect>
         </filters>
-        <massaction name="listing_massaction"
-                    component="Magento_Ui/js/grid/tree-massactions"
-                    class="\Magento\Catalog\Ui\Component\Product\MassAction">
+        <massaction name="listing_massaction">
             <action name="delete">
                 <settings>
                     <confirm>
                         <message translate="true">Delete selected action?</message>
                         <title translate="true">Delete action</title>
                     </confirm>
-                    <url path="catalog/product/massDelete"/>
+                    <url path="puga_action/action/massDelete"/>
                     <type>delete</type>
                     <label translate="true">Delete</label>
                 </settings>
@@ -117,6 +115,16 @@
                 </item>
             </argument>
         </column>
+        <column name="image" class="Magento\Catalog\Ui\Component\Listing\Columns\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail" sortOrder="10">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="editor" xsi:type="array">
+                        <item name="editorType" xsi:type="string">image</item>
+                    </item>
+                    <item name="label" xsi:type="string" translate="true">Action image</item>
+                </item>
+            </argument>
+        </column>
         <column name="name">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -131,25 +139,50 @@
                 </item>
             </argument>
         </column>
-        <!--<column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="filter" xsi:type="string">dateRange</item>-->
-                    <!--<item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>-->
-                    <!--<item name="dataType" xsi:type="string">date</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Created</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</column>-->
-        <!--<column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="filter" xsi:type="string">dateRange</item>-->
-                    <!--<item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>-->
-                    <!--<item name="dataType" xsi:type="string">date</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Modified</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</column>-->
+        <column name="status" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <filter>select</filter>
+                <!--<options class="Puga\Action\Ui\Component\Listing\Column\Status\Options"/>-->
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="create_datetime" class="Magento\Ui\Component\Listing\Columns\Date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">dateRange</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>
+                    <item name="dataType" xsi:type="string">date</item>
+                    <item name="label" xsi:type="string" translate="true">Created Data</item>
+                </item>
+            </argument>
+        </column>
+        <column name="start_datetime" class="Magento\Ui\Component\Listing\Columns\Date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">dateRange</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>
+                    <item name="dataType" xsi:type="string">date</item>
+                    <item name="label" xsi:type="string" translate="true">Start Date</item>
+                </item>
+            </argument>
+        </column>
+        <column name="end_datetime" class="Magento\Ui\Component\Listing\Columns\Date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">dateRange</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>
+                    <item name="dataType" xsi:type="string">date</item>
+                    <item name="label" xsi:type="string" translate="true">End Date</item>
+                </item>
+            </argument>
+        </column>
+        <actionsColumn name="actions" class="Puga\Action\Ui\Component\Listing\Column\ActionActions">
+            <settings>
+                <indexField>id</indexField>
+                <resizeEnabled>false</resizeEnabled>
+                <resizeDefaultWidth>107</resizeDefaultWidth>
+            </settings>
+        </actionsColumn>
     </columns>
 </listing>
