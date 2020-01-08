@@ -93,6 +93,14 @@
                 </item>
             </argument>
         </column>
+        <column name="is_active" sortOrder="30" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <filter>select</filter>
+                <options class="Magento\Config\Model\Config\Source\Yesno"/>
+                <dataType>select</dataType>
+                <label translate="true">Is Active</label>
+            </settings>
+        </column>
         <column name="image" class="Magento\Catalog\Ui\Component\Listing\Columns\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail" sortOrder="10">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
