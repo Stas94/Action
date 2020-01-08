@@ -6,12 +6,11 @@
 namespace Puga\Action\Controller\Adminhtml\Action;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\Request\DataPersistorInterface;
-use Puga\Action\Model\Action;
+use Magento\Backend\App\Action;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
- * Save Action page action.
+ * Save CMS page action.
  */
 class Save extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
@@ -22,10 +21,6 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
      */
     const ADMIN_RESOURCE = 'Puga_Action::save';
 
-    /**
-     * @var DataPersistorInterface
-     */
-    protected $dataPersistor;
 
     /**
      * @var \Puga\Action\Model\ActionFactory
@@ -38,25 +33,27 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
     private $pageRepository;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param DataPersistorInterface $dataPersistor
+     * Save constructor.
+     * @param Action\Context $context
      * @param \Puga\Action\Model\ActionFactory|null $pageFactory
      * @param \Puga\Action\Api\ActionRepositoryInterface|null $pageRepository
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        DataPersistorInterface $dataPersistor,
-        \Puga\Action\Model\ActionFactory $pageFactory = null
+        Action\Context $context,
+        \Puga\Action\Model\ActionFactory $pageFactory = null,
+        \Puga\Action\Api\ActionRepositoryInterface $pageRepository = null
     ) {
-        $this->dataPersistor = $dataPersistor;
         $this->pageFactory = $pageFactory
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ActionFactory::class);
+        $this->pageRepository = $pageRepository
+            ?: \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Puga\Action\Api\ActionRepositoryInterface::class);
         parent::__construct($context);
     }
+
     /**
      * Save action
      *
-     * @param \Puga\Action\Model\Action
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return \Magento\Framework\Controller\ResultInterface
      */
@@ -66,9 +63,8 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         if ($data) {
-//            $data = $this->dataProcessor->filter($data);
             if (isset($data['is_active']) && $data['is_active'] === 'true') {
-                $data['is_active'] = Action::STATUS_ENABLED;
+                $data['is_active'] = \Puga\Action\Model\Action::STATUS_ENABLED;
             }
             if (empty($data['id'])) {
                 $data['id'] = null;
@@ -80,9 +76,9 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
             $id = $this->getRequest()->getParam('id');
             if ($id) {
                 try {
-                    $model = $model->load($id);
+                    $model = $this->pageRepository->getById($id);
                 } catch (LocalizedException $e) {
-                    $this->messageManager->addErrorMessage(__('This action no longer exists.'));
+                    $this->messageManager->addErrorMessage(__('This page no longer exists.'));
                     return $resultRedirect->setPath('*/*/');
                 }
             }
@@ -95,17 +91,14 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
             );
 
             try {
-//                $this->pageRepository->save($model);
-                $model->save();
-                $this->messageManager->addSuccessMessage(__('You saved the page.'));
+                $this->pageRepository->save($model);
+                $this->messageManager->addSuccessMessage(__('You saved the action.'));
                 return $this->processResultRedirect($model, $resultRedirect, $data);
             } catch (LocalizedException $e) {
                 $this->messageManager->addExceptionMessage($e->getPrevious() ?: $e);
             } catch (\Exception $e) {
                 $this->messageManager->addExceptionMessage($e, __('Something went wrong while saving the page.'));
             }
-
-            $this->dataPersistor->set('puga_action', $data);
             return $resultRedirect->setPath('*/*/edit', ['id' => $this->getRequest()->getParam('id')]);
         }
         return $resultRedirect->setPath('*/*/');
@@ -114,7 +107,7 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
     /**
      * Process result redirect
      *
-     * @param \Magento\Cms\Api\Data\PageInterface $model
+     * @param \Puga\Action\Api\Data\ActionInterface $model
      * @param \Magento\Backend\Model\View\Result\Redirect $resultRedirect
      * @param array $data
      * @return \Magento\Backend\Model\View\Result\Redirect
@@ -136,7 +129,6 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
                 ]
             );
         }
-        $this->dataPersistor->clear('puga_action');
         if ($this->getRequest()->getParam('back')) {
             return $resultRedirect->setPath('*/*/edit', ['id' => $model->getId(), '_current' => true]);
         }

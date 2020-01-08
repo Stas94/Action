@@ -110,7 +110,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
     {
         $meta = parent::getMeta();
 
-        if (!$this->auth->isAllowed('Puga_Action::save_design')) {
+        if (!$this->auth->isAllowed('Puga_Action::save')) {
             $designMeta = [
                 'design' => [
                     'arguments' => [

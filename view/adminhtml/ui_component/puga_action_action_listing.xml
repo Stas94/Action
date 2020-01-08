@@ -27,28 +27,6 @@
                     <label translate="true">Delete</label>
                 </settings>
             </action>
-            <action name="status">
-                <settings>
-                    <type>status</type>
-                    <label translate="true">Change status</label>
-                    <actions>
-                        <action name="0">
-                            <type>enable</type>
-                            <label translate="true">Enable</label>
-                            <url path="catalog/product/massStatus">
-                                <param name="status">1</param>
-                            </url>
-                        </action>
-                        <action name="1">
-                            <type>disable</type>
-                            <label translate="true">Disable</label>
-                            <url path="catalog/product/massStatus">
-                                <param name="status">2</param>
-                            </url>
-                        </action>
-                    </actions>
-                </settings>
-            </action>
         </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>

@@ -19,12 +19,29 @@
         <column xsi:type="varchar" name="image" nullable="false" length="32" default="image" comment="Action image"/>
         <column xsi:type="timestamp" name="create_datetime" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
                 comment="Action Created"/>
-        <column xsi:type="timestamp" name="start_datetime" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
-                comment="Action Start"/>
-        <column xsi:type="timestamp" name="end_datetime" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
-                comment="Action End"/>
+        <column xsi:type="date" name="start_datetime" comment="Action Start"/>
+        <column xsi:type="date" name="end_datetime" comment="Action End"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
+    </table>
+    <table name="puga_action_product" resource="default" engine="innodb"
+           comment="Product To Action Linkage Table">
+        <column xsi:type="int" name="id" padding="11" unsigned="false" nullable="false" identity="true"
+                comment="ID"/>
+        <column xsi:type="int" name="action_id" padding="10" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Action ID"/>
+        <column xsi:type="int" name="product_id" padding="10" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Product ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" table="puga_action_product" referenceId="PUGA_ACTION_PRODUCT_ID" column="product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="PUGA_ACTION_PRODUCT_ACTION_ID_PUGA_ACTION_ACTION_ACTION_ID"
+                    table="puga_action_product" column="action_id" referenceTable="puga_action_action"
+                    referenceColumn="id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="PUGA_ACTION_PRD_PRD_ID_CAT_PRD_ACT_ACT_ID" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
     </table>
 </schema>
