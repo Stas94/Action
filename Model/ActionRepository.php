@@ -14,7 +14,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Puga\Action\Model\ResourceModel\Action as ResourceAction;
 use Puga\Action\Model\ResourceModel\Action\CollectionFactory as ActionCollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
-use \Puga\Action\Api\Data\ActionInterface;
+use Puga\Action\Api\Data\ActionInterface;
 
 /**
  * Class ActionRepository
@@ -121,8 +121,8 @@ class ActionRepository implements ActionRepositoryInterface
     /**
      * Delete Page
      *
-     * @param ActionInterface $page
-     * @return bool
+     * @param ActionInterface|Action $page
+     * @return Action
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function delete(ActionInterface $page)
@@ -134,7 +134,7 @@ class ActionRepository implements ActionRepositoryInterface
                 __('Could not delete the page: %1', $exception->getMessage())
             );
         }
-        return true;
+        return $page;
     }
 
     /**
