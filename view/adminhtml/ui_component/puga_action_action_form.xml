@@ -136,7 +136,7 @@
                 </item>
             </argument>
             <settings>
-                <elementTmpl>ui/form/element/uploader/image</elementTmpl>
+                <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
                 <dataType>string</dataType>
                 <label translate="true">Action Image</label>
                 <visible>true</visible>
@@ -149,9 +149,9 @@
                         <uploaderConfig>
                             <param xsi:type="url" name="url" path="puga_action/action_image/upload"/>
                         </uploaderConfig>
-                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <previewTmpl>Puga_Action/image-preview</previewTmpl>
                         <openDialogTitle>Media Gallery</openDialogTitle>
-                        <initialMediaGalleryOpenSubpath>action</initialMediaGalleryOpenSubpath>
+                        <initialMediaGalleryOpenSubpath>action/action</initialMediaGalleryOpenSubpath>
                         <allowedExtensions>jpg jpeg gif png</allowedExtensions>
                         <maxFileSize>4194304</maxFileSize>
                     </settings>

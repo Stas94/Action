@@ -5,9 +5,8 @@
  */
 namespace Puga\Action\Controller\Adminhtml\Action\Image;
 
-use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\ResultFactory;
 
 /**
  * Class Upload
@@ -15,107 +14,50 @@ use Magento\Framework\Exception\LocalizedException;
 class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
     /**
-     * Authorization level of a basic admin session
+     * Image uploader
      *
-     * @see _isAllowed()
+     * @var \Magento\Catalog\Model\ImageUploader
      */
-    const ADMIN_RESOURCE = 'Puga_Action::action';
+    protected $imageUploader;
 
     /**
-     * @var \Magento\Framework\Controller\Result\RawFactory
-     */
-    protected $resultRawFactory;
-
-    /**
-     * @var array
-     */
-    private $allowedMimeTypes = [
-        'jpg' => 'image/jpg',
-        'jpeg' => 'image/jpeg',
-        'gif' => 'image/png',
-        'png' => 'image/gif'
-    ];
-
-    /**
+     * Upload constructor.
+     *
      * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
+     * @param \Puga\Action\Model\ImageUploader $imageUploader
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
+        \Puga\Action\Model\ImageUploader $imageUploader
     ) {
         parent::__construct($context);
-        $this->resultRawFactory = $resultRawFactory;
+        $this->imageUploader = $imageUploader;
     }
 
     /**
-     * Upload image(s) to the product gallery.
+     * Check admin permissions for this controller
      *
-     * @return \Magento\Framework\Controller\Result\Raw
+     * @return boolean
+     */
+    protected function _isAllowed()
+    {
+        return $this->_authorization->isAllowed('Puga_Action::action');
+    }
+
+    /**
+     * Upload file controller action
+     *
+     * @return \Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
+        $imageId = $this->_request->getParam('param_name', 'image');
+
         try {
-            $uploader = $this->_objectManager->create(
-                \Magento\MediaStorage\Model\File\Uploader::class,
-                ['fileId' => 'image']
-            );
-            $uploader->setAllowedExtensions($this->getAllowedExtensions());
-
-            if (!$uploader->checkMimeType($this->getAllowedMimeTypes())) {
-                throw new LocalizedException(__('Disallowed File Type.'));
-            }
-
-            /** @var \Magento\Framework\Image\Adapter\AdapterInterface $imageAdapter */
-            $imageAdapter = $this->_objectManager->get(\Magento\Framework\Image\AdapterFactory::class)->create();
-            $uploader->addValidateCallback('catalog_product_image', $imageAdapter, 'validateUploadFile');
-            $uploader->setAllowRenameFiles(true);
-            $uploader->setFilesDispersion(true);
-            /** @var \Magento\Framework\Filesystem\Directory\Read $mediaDirectory */
-            $mediaDirectory = $this->_objectManager->get(\Magento\Framework\Filesystem::class)
-                ->getDirectoryRead(DirectoryList::MEDIA);
-            $config = $this->_objectManager->get(\Puga\Action\Model\Action\Config::class);
-            $result = $uploader->save($mediaDirectory->getAbsolutePath($config->getBaseTmpMediaPath()));
-
-            $this->_eventManager->dispatch(
-                'catalog_product_gallery_upload_image_after',
-                ['result' => $result, 'action' => $this]
-            );
-
-            unset($result['tmp_name']);
-            unset($result['path']);
-
-            $result['url'] = $this->_objectManager->get(\Puga\Action\Model\Action\Config::class)
-                ->getTmpMediaUrl($result['file']);
-            $result['file'] = $result['file'] . '.tmp';
+            $result = $this->imageUploader->saveFileToTmpDir($imageId);
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }
-
-        /** @var \Magento\Framework\Controller\Result\Raw $response */
-        $response = $this->resultRawFactory->create();
-        $response->setHeader('Content-type', 'text/plain');
-        $response->setContents(json_encode($result));
-        return $response;
-    }
-
-    /**
-     * Get the set of allowed file extensions.
-     *
-     * @return array
-     */
-    private function getAllowedExtensions()
-    {
-        return array_keys($this->allowedMimeTypes);
-    }
-
-    /**
-     * Get the set of allowed mime types.
-     *
-     * @return array
-     */
-    private function getAllowedMimeTypes()
-    {
-        return array_values($this->allowedMimeTypes);
+        return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
     }
 }

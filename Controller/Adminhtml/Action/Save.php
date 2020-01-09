@@ -8,6 +8,7 @@ namespace Puga\Action\Controller\Adminhtml\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Backend\App\Action;
 use Magento\Framework\Exception\LocalizedException;
+use Puga\Action\Model\ImageUploader;
 
 /**
  * Save CMS page action.
@@ -28,6 +29,11 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
     private $pageFactory;
 
     /**
+     * @var ImageUploader
+     */
+    private $imageUploader;
+
+    /**
      * @var \Puga\Action\Api\ActionRepositoryInterface
      */
     private $pageRepository;
@@ -37,12 +43,16 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
      * @param Action\Context $context
      * @param \Puga\Action\Model\ActionFactory|null $pageFactory
      * @param \Puga\Action\Api\ActionRepositoryInterface|null $pageRepository
+     * @param \Puga\Action\Model\ActionFactory $imageUpload = null
      */
     public function __construct(
         Action\Context $context,
         \Puga\Action\Model\ActionFactory $pageFactory = null,
-        \Puga\Action\Api\ActionRepositoryInterface $pageRepository = null
+        \Puga\Action\Api\ActionRepositoryInterface $pageRepository = null,
+        \Puga\Action\Model\ActionFactory $imageUpload = null
     ) {
+        $this->imageUploader = $imageUpload
+            ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ImageUploader::class);
         $this->pageFactory = $pageFactory
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ActionFactory::class);
         $this->pageRepository = $pageRepository
@@ -56,6 +66,7 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return \Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
@@ -68,6 +79,14 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
             }
             if (empty($data['id'])) {
                 $data['id'] = null;
+            }
+
+            if(isset($data['image'])) {
+                if (is_array($data['image'])) {
+                    $fileName = $data['image'][0]['name'];
+                    $data['image'] = $fileName;
+                    $this->imageUploader->moveFileFromTmp($fileName);
+                }
             }
 
             /** @var \Puga\Action\Model\Action $model */

@@ -3,14 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Puga\Action\Controller\Adminhtml\Action;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Backend\App\Action\Context;
-use Magento\Ui\Component\MassAction\Filter;
+use Puga\Action\Model\ActionFactory;
+use Magento\Framework\Registry;
 use Puga\Action\Model\ResourceModel\Action\CollectionFactory;
-use Puga\Action\Api\ActionRepositoryInterface;
+use Puga\Action\Model\ResourceModel\Action\Collection;
 
 /**
  * Class MassDelete
@@ -25,33 +27,30 @@ class MassDelete extends \Magento\Backend\App\Action implements HttpPostActionIn
     const ADMIN_RESOURCE = 'Puga_Action::puga_action_delete';
 
     /**
-     * @var Filter
-     */
-    protected $filter;
-
-    /**
      * @var CollectionFactory
      */
     protected $collectionFactory;
 
     /**
-     * @var ActionRepositoryInterface
+     * @var Collection
      */
-    private $actionRepository;
+    private $collection;
 
     /**
      * @param Context $context
-     * @param Filter $filter
+     * @param Registry $coreRegistry
      * @param CollectionFactory $collectionFactory
-     * @param ActionRepositoryInterface $actionRepository
+     * @param ActionFactory $reviewFactory
      */
-    public function __construct(Context $context, Filter $filter, CollectionFactory $collectionFactory, ActionRepositoryInterface $actionRepository = null)
+    public function __construct(
+        Context $context,
+        Registry $coreRegistry,
+        ActionFactory $reviewFactory,
+        CollectionFactory $collectionFactory
+    )
     {
-        $this->filter = $filter;
-        $this->collectionFactory = $collectionFactory;
-        $this->actionRepository = $actionRepository
-            ?: \Magento\Framework\App\ObjectManager::getInstance()->create(ActionRepositoryInterface::class);
         parent::__construct($context);
+        $this->collectionFactory = $collectionFactory;
     }
 
     /**
@@ -62,20 +61,51 @@ class MassDelete extends \Magento\Backend\App\Action implements HttpPostActionIn
      */
     public function execute()
     {
-        $collection = $this->filter->getCollection($this->collectionFactory->create());
-        $collectionSize = $collection->getSize();
-
-        /** @var \Puga\Action\Model\Action $page */
-        foreach ($collection as $page) {
-            $data = $page->getData();
-            $this->actionRepository->delete($data);
+        $reviewsIds = $this->getRequest()->getParam('selected');
+        if (!is_array($reviewsIds)) {
+            $this->messageManager->addError(__('Please select review(s).'));
+        } else {
+            try {
+                foreach ($this->getCollection() as $model) {
+//                    $collectionSize = $this->getCollection()->getSize();
+                    $model->delete();
+                }
+                $this->messageManager->addSuccess(
+                    __('A total of %1 record(s) have been deleted.', count($reviewsIds))
+                );
+            } catch (LocalizedException $e) {
+                $this->messageManager->addError($e->getMessage());
+            } catch (\Exception $e) {
+                $this->messageManager->addException($e, __('Something went wrong while deleting these records.'));
+            }
         }
 
-        $this->messageManager->addSuccessMessage(__('A total of %1 record(s) have been deleted.', $collectionSize));
+        $this->messageManager->addSuccessMessage(__('A total of %1 record(s) have been deleted.'));
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         return $resultRedirect->setPath('*/*/');
+    }
+
+    /**
+     * Returns requested collection.
+     *
+     * @return Collection
+     */
+    private function getCollection(): Collection
+    {
+        if ($this->collection === null) {
+            $collection = $this->collectionFactory->create();
+            $collection->addFieldToFilter(
+                'main_table.' . $collection->getResource()
+                    ->getIdFieldName(),
+                $this->getRequest()->getParam('selected')
+            );
+
+            $this->collection = $collection;
+        }
+
+        return $this->collection;
     }
 }
