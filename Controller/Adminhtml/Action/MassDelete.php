@@ -9,10 +9,9 @@ namespace Puga\Action\Controller\Adminhtml\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Backend\App\Action\Context;
-use Puga\Action\Model\ActionFactory;
-use Magento\Framework\Registry;
+use Magento\Ui\Component\MassAction\Filter;
 use Puga\Action\Model\ResourceModel\Action\CollectionFactory;
-use Puga\Action\Model\ResourceModel\Action\Collection;
+use Puga\Action\Api\ActionRepositoryInterface;
 
 /**
  * Class MassDelete
@@ -27,30 +26,40 @@ class MassDelete extends \Magento\Backend\App\Action implements HttpPostActionIn
     const ADMIN_RESOURCE = 'Puga_Action::puga_action_delete';
 
     /**
+     * Massactions filter
+     *
+     * @var Filter
+     */
+    protected $filter;
+
+    /**
      * @var CollectionFactory
      */
     protected $collectionFactory;
 
     /**
-     * @var Collection
+     * @var ActionRepositoryInterface
      */
-    private $collection;
+    private $actionRepository;
 
     /**
      * @param Context $context
-     * @param Registry $coreRegistry
+     * @param Filter $filter
      * @param CollectionFactory $collectionFactory
-     * @param ActionFactory $reviewFactory
+     * @param ActionRepositoryInterface $actionRepository
      */
     public function __construct(
         Context $context,
-        Registry $coreRegistry,
-        ActionFactory $reviewFactory,
-        CollectionFactory $collectionFactory
+        Filter $filter,
+        CollectionFactory $collectionFactory,
+        ActionRepositoryInterface $actionRepository = null
     )
     {
-        parent::__construct($context);
+        $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
+        $this->actionRepository = $actionRepository
+            ?: \Magento\Framework\App\ObjectManager::getInstance()->create(ActionRepositoryInterface::class);
+        parent::__construct($context);
     }
 
     /**
@@ -61,51 +70,20 @@ class MassDelete extends \Magento\Backend\App\Action implements HttpPostActionIn
      */
     public function execute()
     {
-        $reviewsIds = $this->getRequest()->getParam('selected');
-        if (!is_array($reviewsIds)) {
-            $this->messageManager->addError(__('Please select review(s).'));
-        } else {
-            try {
-                foreach ($this->getCollection() as $model) {
-//                    $collectionSize = $this->getCollection()->getSize();
-                    $model->delete();
-                }
-                $this->messageManager->addSuccess(
-                    __('A total of %1 record(s) have been deleted.', count($reviewsIds))
-                );
-            } catch (LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
-            } catch (\Exception $e) {
-                $this->messageManager->addException($e, __('Something went wrong while deleting these records.'));
-            }
+        $collection = $this->filter->getCollection($this->collectionFactory->create());
+        $productDeleted = 0;
+        /** @var \Puga\Action\Model\Action $action */
+        foreach ($collection->getItems() as $action) {
+            $this->actionRepository->delete($action);
+            $productDeleted++;
         }
 
-        $this->messageManager->addSuccessMessage(__('A total of %1 record(s) have been deleted.'));
-
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-
-        return $resultRedirect->setPath('*/*/');
-    }
-
-    /**
-     * Returns requested collection.
-     *
-     * @return Collection
-     */
-    private function getCollection(): Collection
-    {
-        if ($this->collection === null) {
-            $collection = $this->collectionFactory->create();
-            $collection->addFieldToFilter(
-                'main_table.' . $collection->getResource()
-                    ->getIdFieldName(),
-                $this->getRequest()->getParam('selected')
+        if ($productDeleted) {
+            $this->messageManager->addSuccessMessage(
+                __('A total of %1 record(s) have been deleted.', $productDeleted)
             );
-
-            $this->collection = $collection;
         }
 
-        return $this->collection;
+        return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath('*/*/');
     }
 }

@@ -81,14 +81,6 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
                 $data['id'] = null;
             }
 
-            if(isset($data['image'])) {
-                if (is_array($data['image'])) {
-                    $fileName = $data['image'][0]['name'];
-                    $data['image'] = $fileName;
-                    $this->imageUploader->moveFileFromTmp($fileName);
-                }
-            }
-
             /** @var \Puga\Action\Model\Action $model */
             $model = $this->pageFactory->create();
 

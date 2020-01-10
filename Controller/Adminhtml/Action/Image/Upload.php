@@ -1,8 +1,5 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+
 namespace Puga\Action\Controller\Adminhtml\Action\Image;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -16,7 +13,7 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
     /**
      * Image uploader
      *
-     * @var \Magento\Catalog\Model\ImageUploader
+     * @var \Puga\Action\Model\ImageUploader
      */
     protected $imageUploader;
 
@@ -51,10 +48,8 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
      */
     public function execute()
     {
-        $imageId = $this->_request->getParam('param_name', 'image');
-
         try {
-            $result = $this->imageUploader->saveFileToTmpDir($imageId);
+            $result = $this->imageUploader->saveFileToTmpDir(key($_FILES));
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }
