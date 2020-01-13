@@ -5,6 +5,9 @@
  */
 namespace Puga\Action\Model\Action;
 
+use Magento\Framework\UrlInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Puga\Action\Model\ResourceModel\Action\Collection;
 use Puga\Action\Model\ResourceModel\Action\CollectionFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Request\DataPersistorInterface;
@@ -17,7 +20,7 @@ use Magento\Framework\AuthorizationInterface;
 class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
 {
     /**
-     * @var \Puga\Action\Model\ResourceModel\Action\Collection
+     * @var Collection
      */
     protected $collection;
 
@@ -32,6 +35,13 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
     protected $loadedData;
 
     /**
+     * Store manager
+     *
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * @var AuthorizationInterface
      */
     private $auth;
@@ -39,6 +49,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
     /**
      * @param string $name
      * @param string $primaryFieldName
+     * @param StoreManagerInterface $storeManager
      * @param string $requestFieldName
      * @param CollectionFactory $pageCollectionFactory
      * @param DataPersistorInterface $dataPersistor
@@ -50,6 +61,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
     public function __construct(
         $name,
         $primaryFieldName,
+        StoreManagerInterface $storeManager,
         $requestFieldName,
         CollectionFactory $pageCollectionFactory,
         DataPersistorInterface $dataPersistor,
@@ -58,6 +70,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         PoolInterface $pool = null,
         ?AuthorizationInterface $auth = null
     ) {
+        $this->storeManager = $storeManager;
         $this->collection = $pageCollectionFactory->create();
         $this->dataPersistor = $dataPersistor;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data, $pool);
@@ -89,14 +102,22 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         $items = $this->collection->getItems();
         /** @var $page \Puga\Action\Model\Action */
         foreach ($items as $page) {
-            $this->loadedData[$page->getId()] = $page->getData();
+            $pageData = $page->getData();
+            if (array_key_exists('image', $pageData) && $pageData['image']) {
+                $image = $pageData['image'];
+                $pageData['image'] = [
+                    [
+                        'name' => $image,
+                        'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'action/image/' . $image
+                    ]
+                ];
+            }
+            $this->loadedData[$page->getId()] = $pageData;
         }
 
         $data = $this->dataPersistor->get('puga_action_action');
         if (!empty($data)) {
-            $page = $this->collection->getNewEmptyItem();
-            $page->setData($data);
-            $this->loadedData[$page->getId()] = $page->getData();
+            $this->loadedData[$page->getId()] = $data;
             $this->dataPersistor->clear('puga_action_action');
         }
 

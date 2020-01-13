@@ -43,13 +43,13 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
      * @param Action\Context $context
      * @param \Puga\Action\Model\ActionFactory|null $pageFactory
      * @param \Puga\Action\Api\ActionRepositoryInterface|null $pageRepository
-     * @param \Puga\Action\Model\ActionFactory $imageUpload = null
+     * @param \Puga\Action\Model\ImageUploader $imageUpload = null
      */
     public function __construct(
         Action\Context $context,
         \Puga\Action\Model\ActionFactory $pageFactory = null,
         \Puga\Action\Api\ActionRepositoryInterface $pageRepository = null,
-        \Puga\Action\Model\ActionFactory $imageUpload = null
+        \Puga\Action\Model\ImageUploader $imageUpload = null
     ) {
         $this->imageUploader = $imageUpload
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ImageUploader::class);
@@ -79,6 +79,14 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
             }
             if (empty($data['id'])) {
                 $data['id'] = null;
+            }
+
+            if(isset($data['image'])) {
+                if (is_array($data['image'])) {
+                    $fileName = $data['image'][0]['name'];
+                    $data['image'] = $fileName;
+                    $this->imageUploader->moveFileFromTmp($fileName);
+                }
             }
 
             /** @var \Puga\Action\Model\Action $model */
