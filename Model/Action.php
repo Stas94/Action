@@ -292,4 +292,25 @@ class Action extends \Magento\Framework\Model\AbstractModel implements ActionInt
     {
         $this->setData(self::STATUS, $status);
     }
+
+    /**
+     * Retrieve array of product id's for category
+     *
+     * The array returned has the following format:
+     *
+     * @return array
+     */
+    public function getProductsChecked()
+    {
+        if (!$this->getId()) {
+            return [];
+        }
+
+        $array = $this->getData('products_position');
+        if ($array === null) {
+            $array = $this->getResource()->getProductsChecked($this);
+            $this->setData('products_position', $array);
+        }
+        return $array;
+    }
 }

@@ -187,4 +187,15 @@
             </settings>
         </field>
     </fieldset>
+    <fieldset name="assign_products" sortOrder="40">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Products in Action</label>
+        </settings>
+        <container name="assign_products_container" sortOrder="160">
+            <htmlContent name="html_content">
+                <block name="gallery" class="Puga\Action\Block\Adminhtml\Action\AssignProducts"/>
+            </htmlContent>
+        </container>
+    </fieldset>
 </form>

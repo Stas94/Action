@@ -104,6 +104,14 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
 
             $model->setData($data);
 
+            if (isset($data['action_products'])
+                && is_string($data['action_products'])
+                && !$model->getProductsReadonly()
+            ) {
+                $products = json_decode($data['action_products'], true);
+                $model->setPostedProducts($products);
+            }
+
             $this->_eventManager->dispatch(
                 'puga_action_prepare_save',
                 ['page' => $model, 'request' => $this->getRequest()]
