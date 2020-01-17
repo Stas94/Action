@@ -12,15 +12,15 @@
 
 namespace Puga\Action\Block\Adminhtml\Action\Tab;
 
-use Magento\Backend\Block\Widget\Grid;
 use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Extended;
 
-//use Magento\Catalog\Model\Product\Attribute\Source\Status;
-//use Magento\Catalog\Model\Product\Visibility;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\App\ObjectManager;
 
-class Product extends \Magento\Backend\Block\Widget\Grid\Extended
+class Product extends Extended
 {
     /**
      * Core registry
@@ -55,23 +55,26 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      * @param \Magento\Framework\Registry $coreRegistry
      * @param array $data
-     * //     * @param Visibility|null $visibility
-     * //     * @param Status|null $status
+     * @param Visibility|null $visibility
+     * @param Status|null $status
+     * @param Type|null $type
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Framework\Registry $coreRegistry,
-        array $data = []
-//        Visibility $visibility = null,
-//        Status $status = null
+        array $data = [],
+        Visibility $visibility = null,
+        Status $status = null,
+        Type $type = null
     )
     {
         $this->_productFactory = $productFactory;
         $this->_coreRegistry = $coreRegistry;
-//        $this->visibility = $visibility ?: ObjectManager::getInstance()->get(Visibility::class);
-//        $this->status = $status ?: ObjectManager::getInstance()->get(Status::class);
+        $this->visibility = $visibility ?: ObjectManager::getInstance()->get(Visibility::class);
+        $this->status = $status ?: ObjectManager::getInstance()->get(Status::class);
+        $this->type = $type ?: ObjectManager::getInstance()->get(Type::class);
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -96,12 +99,12 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
 
     /**
      * @param Column $column
-     * @return $this
+     * @return $this|Extended
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _addColumnFilterToCollection($column)
     {
-        // Set custom filter for in category flag
-        if ($column->getId() == 'action_id') {
+        if ($column->getId() == 'in_action') {
             $productIds = $this->_getSelectedProducts();
             if (empty($productIds)) {
                 $productIds = 0;
@@ -118,10 +121,15 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
     }
 
     /**
-     * @return Grid
+     * @return Extended
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _prepareCollection()
     {
+        if ($this->getAction()->getId()) {
+            $this->setDefaultFilter(['in_action' => 1]);
+        }
+
         $collection = $this->_productFactory->create()->getCollection()->addAttributeToSelect(
             'name'
         )->addAttributeToSelect(
@@ -145,15 +153,26 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
             $collection->addStoreFilter($storeId);
         }
         $this->setCollection($collection);
+
+
+        if ($this->getAction()->getProductsReadonly()) {
+            $productIds = $this->_getSelectedProducts();
+            if (empty($productIds)) {
+                $productIds = 0;
+            }
+            $this->getCollection()->addFieldToFilter('entity_id', ['in' => $productIds]);
+        }
+
         return parent::_prepareCollection();
     }
 
     /**
      * @return Extended
+     * @throws \Exception
      */
     protected function _prepareColumns()
     {
-//        if (!$this->getAction()->getProductsReadonly()) {
+        if (!$this->getAction()->getProductsReadonly()) {
             $this->addColumn(
                 'in_action',
                 [
@@ -165,7 +184,7 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
                     'column_css_class' => 'col-select col-massaction'
                 ]
             );
-//        }
+        }
         $this->addColumn(
             'entity_id',
             [
@@ -178,12 +197,12 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
         );
         $this->addColumn('name', ['header' => __('Name'), 'index' => 'name']);
         $this->addColumn(
-            'type',
+            'type_id',
             [
                 'header' => __('Type'),
+                'index' => 'type_id',
                 'type' => 'options',
-                'index' => 'type',
-//                'options' => $this->type->getOptions();
+                'options' => $this->type->getOptionArray()
             ]
         );
         $this->addColumn(
@@ -192,7 +211,7 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
                 'header' => __('Status'),
                 'index' => 'status',
                 'type' => 'options',
-//                'options' => $this->status->getOptionArray()
+                'options' => $this->status->getOptionArray()
             ]
         );
         $this->addColumn(
@@ -201,7 +220,7 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
                 'header' => __('Visibility'),
                 'index' => 'visibility',
                 'type' => 'options',
-//                'options' => $this->visibility->getOptionArray(),
+                'options' => $this->visibility->getOptionArray(),
                 'header_css_class' => 'col-visibility',
                 'column_css_class' => 'col-visibility'
             ]
@@ -216,7 +235,7 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
      */
     public function getGridUrl()
     {
-        return $this->getUrl('action/*/grid', ['_current' => true]);
+        return $this->getUrl('*/*/grid', ['_current' => true]);
     }
 
     /**

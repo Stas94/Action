@@ -10,7 +10,6 @@ use Magento\Ui\Component\Control\Container;
 
 /**
  * Class SaveButton
- * @package Magento\Customer\Block\Adminhtml\Edit
  */
 class SaveButton extends GenericButton implements ButtonProviderInterface
 {
@@ -20,7 +19,7 @@ class SaveButton extends GenericButton implements ButtonProviderInterface
     public function getButtonData()
     {
         return [
-            'label' => __('Save'),
+            'label' => __('Save and Edit'),
             'class' => 'save primary',
             'data_attribute' => [
                 'mage-init' => [
