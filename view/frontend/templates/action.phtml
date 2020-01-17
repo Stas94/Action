@@ -4,4 +4,52 @@
  * @var \Puga\Action\Block\Action $block
  */
 
-echo $block->sayHello();
+$blocks = $block->getActionCollection();
+$wight = '600px';
+$height = '160px';
+?>
+<h1><?= _('Action') ?></h1>
+
+<div class="products wrapper grid products-grid">
+    <div class="products list items product-items">
+        <?php foreach ($blocks as $key => $item) : ?>
+            <li class="item product product-item" style="display: list-item; width: 100%">
+                <div class="right" style="float: right !important;">
+                    <div id="end-date">
+                        <div class="time-left"
+                             style="width: 175px; background-color: #F9F9F9; font-weight: bold; text-align: center;">
+                            <h3 style="font-size: 12px; color: rgb(89, 89, 89);">До завершення акції</h3>
+                            <div class="unit-container"
+                                 style="text-align: center; margin-top: -2px; display: inline-block; color: rgb(227, 24, 55)">
+                                <?php if ($item->getEndDatetime()) : ?>
+                                    <?php $date = $block->getDate($item); ?>
+                                    <?= $date ?>
+                                    <p class="unit"
+                                       style="clear: both; margin-top: -7px; font-size: 11px;">
+                                        <?= __('Днів') ?></p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2>
+                    <a href="<?= $item->getName(); ?>" style="color: #568da7; font-size: 18px;">
+                        <?= $item->getName(); ?>
+                    </a>
+                </h2>
+                <div class="product-item" style="width: 100%">
+                    <p class="short-description"
+                       style="margin-bottom: 21px; white-space: normal; word-wrap: break-word; display: block">
+                        <?= $item->getDescription() ?>
+                    </p>
+                    <?php // Product Image ?>
+                    <span class="product-image"
+                          style="width:<?= $wight ?>; height: <?= $height ?>; display: inline-block;">
+                        <span class="product-image-wrapper" style="padding-bottom: 160px">
+                            <img class="product-image-photo" src="<?= $block->getImage($item) ?>"/>
+                        </span>
+                </div>
+            </li>
+        <?php endforeach; ?>
+    </div>
+</div>
