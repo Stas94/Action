@@ -42,7 +42,9 @@ class Action extends \Magento\Framework\View\Element\Template
      */
     public function getActionCollection()
     {
-        $collection = $this->_actionFactory->create()->getCollection();
+        $collection = $this->_actionFactory->create()->getCollection()
+            ->addFieldToFilter('start_datetime',['lteq' => '2020-03.01'])
+            ->setOrder('start_datetime');
         return $collection;
     }
 
@@ -74,13 +76,22 @@ class Action extends \Magento\Framework\View\Element\Template
      */
     public function getDate($date)
     {
-        $timestampStart = strtotime($date['start_datetime']);
         $timestampEnd = strtotime($date['end_datetime']);
-        $start = date('d', $timestampStart);
+        $start = date('d');
         $end = date('d', $timestampEnd);
 
         $result = $end - $start;
         return $result;
+    }
+
+    /**
+     * @param string $route
+     * @param array $params
+     * @return string
+     */
+    public function getUrl($route = '', $params = [])
+    {
+        return parent::getUrl($route, $params);
     }
 
 }
