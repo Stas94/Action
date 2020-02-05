@@ -3,7 +3,7 @@ namespace Puga\Action\Block;
 
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
-
+use DateTime;
 class Action extends \Magento\Framework\View\Element\Template
 {
     protected $_actionFactory;
@@ -49,6 +49,7 @@ class Action extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * @var $item
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
@@ -76,12 +77,11 @@ class Action extends \Magento\Framework\View\Element\Template
      */
     public function getDate($date)
     {
-        $timestampEnd = strtotime($date['end_datetime']);
-        $start = date('d');
-        $end = date('d', $timestampEnd);
+        $startDate = new DateTime($date['start_datetime']);
+        $endDate = new DateTime($date['end_datetime']);
+        $interval = $startDate->diff($endDate);
 
-        $result = $end - $start;
-        return $result;
+        return $interval->days;
     }
 
     /**

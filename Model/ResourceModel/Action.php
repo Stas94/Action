@@ -1,9 +1,6 @@
 <?php
 namespace Puga\Action\Model\ResourceModel;
 
-use Magento\Catalog\Model\ResourceModel\Category;
-use Magento\Framework\DataObject;
-use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\AbstractModel;
 
 class Action extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
@@ -14,14 +11,8 @@ class Action extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @var string
      */
-    protected $_categoryProductTable;
+    protected $_actionProductTable;
 
-    /**
-     * Core event manager proxy
-     *
-     * @var ManagerInterface
-     */
-    protected $_eventManager = null;
 
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context
@@ -36,46 +27,33 @@ class Action extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Process category data after save category object
-     *
-     * Save related products ids and update path value
      *
      * @param AbstractModel $object
      * @return \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _afterSave(AbstractModel $object)
     {
-        $this->_saveCategoryProducts($object);
+        $this->_saveActionProducts($object);
         return parent::_afterSave($object);
     }
 
     /**
-     * Save category products relation
+     * Save action products relation
      *
      * @param \Puga\Action\Model\Action $action
      * @return $this
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function _saveCategoryProducts($action)
+    protected function _saveActionProducts($action)
     {
         $action->setIsChangedProductList(false);
-        $id = $action->getId();
-        /**
-         * new category-product relationships
-         */
+        $actionId = $action->getId();
+
         $products = $action->getPostedProducts();
 
-        /**
-         * Example re-save category
-         */
         if ($products === null) {
             return $this;
         }
 
-        /**
-         * old category-product relationships
-         */
         $oldProducts = $action->getProductsChecked();
 
         $insert = array_diff_key($products, $oldProducts);
@@ -94,29 +72,29 @@ class Action extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
          * Delete products from category
          */
         if (!empty($delete)) {
-            $cond = ['product_id IN(?)' => array_keys($delete), 'action_id=?' => $id];
-            $connection->delete($this->getCategoryProductTable(), $cond);
+            $cond = ['product_id IN(?)' => array_keys($delete), 'action_id=?' => $actionId];
+            $connection->delete($this->getActionProductTable(), $cond);
         }
 
         /**
-         * Add products to category
+         * Add products to action
          */
         if (!empty($insert)) {
             $data = [];
             foreach ($insert as $productId => $position) {
                 $data[] = [
-                    'action_id' => (int)$id,
+                    'action_id' => (int)$actionId,
                     'product_id' => (int)$productId,
                 ];
             }
-            $connection->insertMultiple($this->getCategoryProductTable(), $data);
+            $connection->insertMultiple($this->getActionProductTable(), $data);
         }
         return $this;
     }
 
 
     /**
-     * Get positions of associated to category products
+     * Get positions of associated to action products
      *
      * @param \Puga\Action\Model\Action $action
      * @return array
@@ -136,15 +114,15 @@ class Action extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Category product table name getter
+     * Action product table name getter
      *
      * @return string
      */
-    public function getCategoryProductTable()
+    public function getActionProductTable()
     {
-        if (!$this->_categoryProductTable) {
-            $this->_categoryProductTable = $this->getTable('puga_action_product');
+        if (!$this->_actionProductTable) {
+            $this->_actionProductTable = $this->getTable('puga_action_product');
         }
-        return $this->_categoryProductTable;
+        return $this->_actionProductTable;
     }
 }

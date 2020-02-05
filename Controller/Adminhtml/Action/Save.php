@@ -16,17 +16,9 @@ use Puga\Action\Model\ImageUploader;
 class Save extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
-     */
-    const ADMIN_RESOURCE = 'Puga_Action::save';
-
-
-    /**
      * @var \Puga\Action\Model\ActionFactory
      */
-    private $pageFactory;
+    private $actionFactory;
 
     /**
      * @var ImageUploader
@@ -36,26 +28,26 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
     /**
      * @var \Puga\Action\Api\ActionRepositoryInterface
      */
-    private $pageRepository;
+    private $actionRepository;
 
     /**
      * Save constructor.
      * @param Action\Context $context
-     * @param \Puga\Action\Model\ActionFactory|null $pageFactory
-     * @param \Puga\Action\Api\ActionRepositoryInterface|null $pageRepository
+     * @param \Puga\Action\Model\ActionFactory|null $actionFactory
+     * @param \Puga\Action\Api\ActionRepositoryInterface|null $actionRepository
      * @param \Puga\Action\Model\ImageUploader $imageUpload = null
      */
     public function __construct(
         Action\Context $context,
-        \Puga\Action\Model\ActionFactory $pageFactory = null,
-        \Puga\Action\Api\ActionRepositoryInterface $pageRepository = null,
+        \Puga\Action\Model\ActionFactory $actionFactory = null,
+        \Puga\Action\Api\ActionRepositoryInterface $actionRepository = null,
         \Puga\Action\Model\ImageUploader $imageUpload = null
     ) {
         $this->imageUploader = $imageUpload
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ImageUploader::class);
-        $this->pageFactory = $pageFactory
+        $this->actionFactory = $actionFactory
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ActionFactory::class);
-        $this->pageRepository = $pageRepository
+        $this->actionRepository = $actionRepository
             ?: \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Puga\Action\Api\ActionRepositoryInterface::class);
         parent::__construct($context);
@@ -74,28 +66,22 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         if ($data) {
-            if (isset($data['is_active']) && $data['is_active'] === 'true') {
-                $data['is_active'] = \Puga\Action\Model\Action::STATUS_ENABLED;
-            }
             if (empty($data['id'])) {
                 $data['id'] = null;
             }
 
-            if(isset($data['image'])) {
-                if (is_array($data['image'])) {
-                    $fileName = $data['image'][0]['name'];
-                    $data['image'] = $fileName;
-                    $this->imageUploader->moveFileFromTmp($fileName);
-                }
+            if (isset($data['image'])) {
+                $fileName = $data['image'][0]['name'];
+                $data['image'] = $fileName;
             }
 
             /** @var \Puga\Action\Model\Action $model */
-            $model = $this->pageFactory->create();
+            $model = $this->actionFactory->create();
 
             $id = $this->getRequest()->getParam('id');
             if ($id) {
                 try {
-                    $model = $this->pageRepository->getById($id);
+                    $model = $this->actionRepository->getById($id);
                 } catch (LocalizedException $e) {
                     $this->messageManager->addErrorMessage(__('This page no longer exists.'));
                     return $resultRedirect->setPath('*/*/');
@@ -106,19 +92,13 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
 
             if (isset($data['action_products'])
                 && is_string($data['action_products'])
-                && !$model->getProductsReadonly()
             ) {
                 $products = json_decode($data['action_products'], true);
                 $model->setPostedProducts($products);
             }
 
-            $this->_eventManager->dispatch(
-                'puga_action_prepare_save',
-                ['page' => $model, 'request' => $this->getRequest()]
-            );
-
             try {
-                $this->pageRepository->save($model);
+                $this->actionRepository->save($model);
                 $this->messageManager->addSuccessMessage(__('You saved the action.'));
                 return $this->processResultRedirect($model, $resultRedirect, $data);
             } catch (LocalizedException $e) {
@@ -136,26 +116,11 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
      *
      * @param \Puga\Action\Api\Data\ActionInterface $model
      * @param \Magento\Backend\Model\View\Result\Redirect $resultRedirect
-     * @param array $data
      * @return \Magento\Backend\Model\View\Result\Redirect
      * @throws LocalizedException
      */
-    private function processResultRedirect($model, $resultRedirect, $data)
+    private function processResultRedirect($model, $resultRedirect)
     {
-        if ($this->getRequest()->getParam('back', false) === 'duplicate') {
-            $newPage = $this->pageFactory->create(['data' => $data]);
-            $newPage->setId(null);
-            $newPage->setIsActive(false);
-            $this->pageRepository->save($newPage);
-            $this->messageManager->addSuccessMessage(__('You duplicated the page.'));
-            return $resultRedirect->setPath(
-                '*/*/edit',
-                [
-                    'id' => $newPage->getId(),
-                    '_current' => true
-                ]
-            );
-        }
         if ($this->getRequest()->getParam('back')) {
             return $resultRedirect->setPath('*/*/edit', ['id' => $model->getId(), '_current' => true]);
         }

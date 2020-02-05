@@ -14,13 +14,6 @@ use Magento\Backend\App\Action;
 class Edit extends \Magento\Backend\App\Action implements HttpGetActionInterface
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
-     */
-    const ADMIN_RESOURCE = 'Puga_Action::save';
-
-    /**
      * Core registry
      *
      * @var \Magento\Framework\Registry
@@ -71,11 +64,9 @@ class Edit extends \Magento\Backend\App\Action implements HttpGetActionInterface
      */
     public function execute()
     {
-        // 1. Get ID and create model
         $id = $this->getRequest()->getParam('id');
         $model = $this->_objectManager->create(\Puga\Action\Model\Action::class);
 
-        // 2. Initial checking
         if ($id) {
             $model->load($id);
             if (!$model->getId()) {
@@ -88,7 +79,6 @@ class Edit extends \Magento\Backend\App\Action implements HttpGetActionInterface
 
         $this->_coreRegistry->register('puga_action', $model);
 
-        // 5. Build edit form
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_initAction();
         $resultPage->addBreadcrumb(

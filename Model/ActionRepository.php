@@ -6,13 +6,11 @@
 
 namespace Puga\Action\Model;
 
-use Puga\Action\Api\Data;
 use Puga\Action\Api\ActionRepositoryInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Puga\Action\Model\ResourceModel\Action as ResourceAction;
-use Puga\Action\Model\ResourceModel\Action\CollectionFactory as ActionCollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Puga\Action\Api\Data\ActionInterface;
 
@@ -30,22 +28,7 @@ class ActionRepository implements ActionRepositoryInterface
     /**
      * @var ActionFactory
      */
-    protected $pageFactory;
-
-    /**
-     * @var ActionCollectionFactory
-     */
-    protected $pageCollectionFactory;
-
-    /**
-     * @var Data\ActionSearchResultsInterfaceFactory
-     */
-    protected $searchResultsFactory;
-
-    /**
-     * @var \Puga\Action\Api\Data\ActionInterfaceFactory
-     */
-    protected $dataPageFactory;
+    protected $actionFactory;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -54,26 +37,17 @@ class ActionRepository implements ActionRepositoryInterface
 
     /**
      * @param ResourceAction $resource
-     * @param ActionFactory $pageFactory
-     * @param Data\ActionInterfaceFactory $dataPageFactory
-     * @param ActionCollectionFactory $pageCollectionFactory
-     * @param Data\ActionSearchResultsInterfaceFactory $searchResultsFactory
+     * @param ActionFactory $actionFactory
      * @param StoreManagerInterface $storeManager
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         ResourceAction $resource,
-        ActionFactory $pageFactory,
-        Data\ActionInterfaceFactory $dataPageFactory,
-        ActionCollectionFactory $pageCollectionFactory,
-        Data\ActionSearchResultsInterfaceFactory $searchResultsFactory,
+        ActionFactory $actionFactory,
         StoreManagerInterface $storeManager
     ) {
         $this->resource = $resource;
-        $this->pageFactory = $pageFactory;
-        $this->pageCollectionFactory = $pageCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->dataPageFactory = $dataPageFactory;
+        $this->actionFactory = $actionFactory;
         $this->storeManager = $storeManager;
     }
 
@@ -110,7 +84,7 @@ class ActionRepository implements ActionRepositoryInterface
      */
     public function getById($pageId)
     {
-        $page = $this->pageFactory->create();
+        $page = $this->actionFactory->create();
         $page->load($pageId);
         if (!$page->getId()) {
             throw new NoSuchEntityException(__('The Action with the "%1" ID doesn\'t exist.', $pageId));
@@ -141,9 +115,7 @@ class ActionRepository implements ActionRepositoryInterface
      * Delete Page by given Page Identity
      *
      * @param string $pageId
-     * @return bool
-     * @throws CouldNotDeleteException
-     * @throws NoSuchEntityException
+     * @return string
      */
     public function deleteById($pageId)
     {

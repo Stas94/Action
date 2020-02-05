@@ -5,6 +5,7 @@
  */
 namespace Puga\Action\Controller\Adminhtml\Action;
 
+use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 
 /**
@@ -12,12 +13,6 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
  */
 class Delete extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
-    /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
-     */
-    const ADMIN_RESOURCE = 'Puga_Action::puga_action_delete';
 
     /**
      * Delete action
@@ -26,47 +21,29 @@ class Delete extends \Magento\Backend\App\Action implements HttpPostActionInterf
      */
     public function execute()
     {
-        // check if we know what should be deleted
         $id = $this->getRequest()->getParam('id');
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         
         if ($id) {
-            $title = "";
             try {
-                // init model and delete
                 $model = $this->_objectManager->create(\Puga\Action\Model\Action::class);
                 $model->load($id);
-                
-                $title = $model->getTitle();
-                $model->delete();
-                
-                // display success message
+
+                $this->actionRepository->delete($model);
                 $this->messageManager->addSuccessMessage(__('The page has been deleted.'));
-                
-                // go to grid
                 $this->_eventManager->dispatch('adminhtml_pugaaction_on_delete', [
-                    'title' => $title,
                     'status' => 'success'
                 ]);
                 
                 return $resultRedirect->setPath('*/*/');
             } catch (\Exception $e) {
-                $this->_eventManager->dispatch(
-                    'adminhtml_pugaaction_on_delete',
-                    ['title' => $title, 'status' => 'fail']
-                );
-                // display error message
                 $this->messageManager->addErrorMessage($e->getMessage());
-                // go back to edit form
                 return $resultRedirect->setPath('*/*/edit', ['id' => $id]);
             }
         }
-        
-        // display error message
         $this->messageManager->addErrorMessage(__('We can\'t find a page to delete.'));
-        
-        // go to grid
+
         return $resultRedirect->setPath('*/*/');
     }
 }

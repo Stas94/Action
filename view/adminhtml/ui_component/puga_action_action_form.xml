@@ -173,6 +173,17 @@
                 <visible>true</visible>
                 <dataScope>start_datetime</dataScope>
             </settings>
+            <formElements>
+                <date>
+                    <settings>
+                        <options>
+                            <option name="timeFormat" xsi:type="string">h:mm:ss A</option>
+                            <option name="dateFormat" xsi:type="string">MMM d, YYYY</option>
+                            <option name="showsTime" xsi:type="boolean">true</option>
+                        </options>
+                    </settings>
+                </date>
+            </formElements>
         </field>
         <field name="end_datetime" formElement="date">
             <argument name="data" xsi:type="array">
@@ -185,6 +196,17 @@
                 <label translate="true">End Action</label>
                 <dataScope>end_datetime</dataScope>
             </settings>
+            <formElements>
+                <date>
+                    <settings>
+                        <options>
+                            <option name="timeFormat" xsi:type="string">h:mm:ss A</option>
+                            <option name="dateFormat" xsi:type="string">MMM d, YYYY</option>
+                            <option name="showsTime" xsi:type="boolean">true</option>
+                        </options>
+                    </settings>
+                </date>
+            </formElements>
         </field>
     </fieldset>
     <fieldset name="assign_products" sortOrder="40">

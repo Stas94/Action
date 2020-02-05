@@ -2,6 +2,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Puga_Action::puga_action" title="Action" module="Puga_Action" sortOrder="51" resource="Puga_Action::puga_action"/>
-        <add id="Puga_Action::action" title="Manage Action" module="Puga_Action" sortOrder="10" action="puga_action/action/index" resource="Puga_Action::action" parent="Puga_Action::puga_action"/>
+        <add id="Puga_Action::action" title="Puga Action" module="Puga_Action" sortOrder="10" action="puga_action/action/index" resource="Puga_Action::action" parent="Puga_Action::puga_action"/>
     </menu>
 </config>

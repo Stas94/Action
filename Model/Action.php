@@ -294,7 +294,7 @@ class Action extends \Magento\Framework\Model\AbstractModel implements ActionInt
     }
 
     /**
-     * Retrieve array of product id's for category
+     * Retrieve array of product id's for action
      *
      * The array returned has the following format:
      *

@@ -49,7 +49,7 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
     public function execute()
     {
         try {
-            $result = $this->imageUploader->saveFileToTmpDir(key($_FILES));
+            $result = $this->imageUploader->saveFileToDir(key($_FILES));
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }

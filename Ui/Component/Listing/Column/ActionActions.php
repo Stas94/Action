@@ -13,17 +13,14 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-/**
- * Class ActionActions
- */
 class ActionActions extends Column
 {
     /** Url path */
-    const CMS_URL_PATH_EDIT = 'puga_action/action/edit';
-    const CMS_URL_PATH_DELETE = 'puga_action/action/delete';
+    const ACTION_URL_PATH_EDIT = 'puga_action/action/edit';
+    const ACTION_URL_PATH_DELETE = 'puga_action/action/delete';
 
     /**
-     * @var \Magento\Cms\Block\Adminhtml\Page\Grid\Renderer\Action\UrlBuilder
+     * @var UrlBuilder
      */
     protected $actionUrlBuilder;
 
@@ -64,7 +61,7 @@ class ActionActions extends Column
         UrlInterface $urlBuilder,
         array $components = [],
         array $data = [],
-        $editUrl = self::CMS_URL_PATH_EDIT,
+        $editUrl = self::ACTION_URL_PATH_EDIT,
         \Magento\Cms\ViewModel\Page\Grid\UrlBuilder $scopeUrlBuilder = null
     ) {
         $this->urlBuilder = $urlBuilder;
@@ -91,7 +88,7 @@ class ActionActions extends Column
                     ];
                     $title = $this->getEscaper()->escapeHtml($item['name']);
                     $item[$name]['delete'] = [
-                        'href' => $this->urlBuilder->getUrl(self::CMS_URL_PATH_DELETE, ['id' => $item['id']]),
+                        'href' => $this->urlBuilder->getUrl(self::ACTION_URL_PATH_DELETE, ['id' => $item['id']]),
                         'label' => __('Delete'),
                         'confirm' => [
                             'title' => __('Delete %1', $title),

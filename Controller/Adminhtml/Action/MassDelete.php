@@ -19,13 +19,6 @@ use Puga\Action\Api\ActionRepositoryInterface;
 class MassDelete extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
-     */
-    const ADMIN_RESOURCE = 'Puga_Action::puga_action_delete';
-
-    /**
      * Massactions filter
      *
      * @var Filter

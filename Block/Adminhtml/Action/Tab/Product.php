@@ -4,15 +4,8 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * Product in category grid
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
-
 namespace Puga\Action\Block\Adminhtml\Action\Tab;
 
-use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Extended;
 
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
