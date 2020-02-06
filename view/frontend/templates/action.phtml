@@ -10,7 +10,7 @@ $height = '200px';
 ?>
 <h1><?= _('Action') ?></h1>
 <?php foreach ($blocks as $key => $item) : ?>
-    <li class="action-list" style="list-style-type: none">
+    <div style="display: flow-root;">
         <div class="right" style="float: right !important;">
             <div id="end-date">
                 <?php if ($item->getEndDatetime()) : ?>
@@ -35,17 +35,11 @@ $height = '200px';
                 <?= $item->getName(); ?>
             </a>
         </h2>
-            <p class="short-description-action"
-               style="float: right">
-                <?= $item->getDescription() ?>
-            </p>
-        <?php // Product Image ?>
-        <span class="action-image"
-              style="width:<?= $wight ?>; height: <?= $height ?>;display: inline-block;">
-                        <span class="action-image-wrapper" style="padding-bottom: 160px">
-                            <img class="action-image-photo" src="<?= $block->getImage($item) ?>"
-                                 style="width:<?= $wight ?>; height: <?= $height ?>;"/>
-                        </span>
-        </span>
-    </li>
+        <p class="short-description-action">
+            <img class="action-image-photo" src="<?= $block->getImage($item) ?>"
+                 style="width:<?= $wight ?>; height: <?= $height ?>; float: left;
+                         margin: 7px 7px 7px 0;"/>
+            <?= $item->getDescription() ?>
+        </p>
+    </div>
 <?php endforeach; ?>

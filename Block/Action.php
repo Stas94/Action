@@ -43,6 +43,7 @@ class Action extends \Magento\Framework\View\Element\Template
     public function getActionCollection()
     {
         $collection = $this->_actionFactory->create()->getCollection()
+            ->addFieldToFilter('is_active', 1)
             ->addFieldToFilter('start_datetime',['lteq' => '2020-03.01'])
             ->setOrder('start_datetime');
         return $collection;

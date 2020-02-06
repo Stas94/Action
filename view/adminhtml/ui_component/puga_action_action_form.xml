@@ -81,7 +81,27 @@
                 </checkbox>
             </formElements>
         </field>
-        <field name="name" sortOrder="20" formElement="input">
+        <field name="status" sortOrder="20" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">action</item>
+                    <item name="disabled" xsi:type="string">${ $.provider }:data.do_we_hide_it</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Status</label>
+                <dataScope>status</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Puga\Action\Ui\Component\Listing\Column\Status\Options"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="name" sortOrder="30" formElement="input">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">action</item>

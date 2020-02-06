@@ -163,7 +163,7 @@
         <column name="status" component="Magento_Ui/js/grid/columns/select">
             <settings>
                 <filter>select</filter>
-                <!--<options class="Puga\Action\Ui\Component\Listing\Column\Status\Options"/>-->
+                <options class="Puga\Action\Ui\Component\Listing\Column\Status\Options"/>
                 <dataType>select</dataType>
                 <label translate="true">Status</label>
             </settings>

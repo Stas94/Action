@@ -1,7 +1,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Puga\Action\Api\ActionRepositoryInterface" type="Puga\Action\Model\ActionRepository"/>
     <preference for="Puga\Action\Api\Data\ActionInterface" type="Puga\Action\Model\Action"/>
-    <preference for="Puga\Action\Api\Data\ActionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">

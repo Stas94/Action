@@ -3,12 +3,8 @@
 /* @var \Puga\Action\Block\Action\View\Action $block */
 
 
-//$actionView = $block->getActionCollection();
-
 $_productCollection = $block->getProductLoad();
 $_helper = $this->helper(Magento\Catalog\Helper\Output::class);
-//$test = $block->getAction();
-//$layout = $test->getLayout('action_0');
 
 $wight = '300px';
 $height = '300px';
@@ -18,13 +14,10 @@ $pos = $block->getPositioned()
 
 <h2><?= $block->getName(); ?></h2>
 <?php // Product Image ?>
-<span class="product-image" style="width:<?= $wight ?>; height: <?= $height ?>; display: inline-block;">
-       <span class="product-image-wrapper" style="padding-bottom: 160px">
-           <img class="product-image-photo" src=""/>
-    </span>
-</span>
-<p class="short-description"
-   style="margin-bottom: 21px; white-space: normal; word-wrap: break-word; display: block">
+<p class="short-description-action" style="display: inline-block;">
+    <?php $image = $block->getActionImage($block->getData())?>
+    <img class="action-image-photo" style="width:<?= $wight ?>; height: <?= $height ?>; float: left;
+            margin: 7px 7px 7px 0;" src="<?= $image['url'] ?>"/>
     <?= $block->getShortDescription() ?>
 </p>
 
