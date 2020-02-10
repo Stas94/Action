@@ -19,8 +19,8 @@
         <column xsi:type="varchar" name="image" nullable="false" length="255" comment="Action image"/>
         <column xsi:type="timestamp" name="create_datetime" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
                 comment="Action Created"/>
-        <column xsi:type="date" name="start_datetime" comment="Action Start"/>
-        <column xsi:type="date" name="end_datetime" comment="Action End"/>
+        <column xsi:type="datetime" name="start_datetime" comment="Action Start"/>
+        <column xsi:type="datetime" name="end_datetime" comment="Action End"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>

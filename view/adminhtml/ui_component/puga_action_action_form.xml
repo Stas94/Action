@@ -123,9 +123,9 @@
                 </item>
             </argument>
             <settings>
-                <!--<validation>-->
-                    <!--<rule name="required-entry" xsi:type="boolean">true</rule>-->
-                <!--</validation>-->
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
                 <dataType>text</dataType>
                 <label translate="true">Description</label>
                 <dataScope>description</dataScope>
@@ -138,6 +138,9 @@
                 </item>
             </argument>
             <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
                 <label translate="true">Short Description</label>
                 <dataScope>short_description</dataScope>
             </settings>
@@ -156,6 +159,9 @@
                 </item>
             </argument>
             <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
                 <dataType>string</dataType>
                 <label translate="true">Action Image</label>
@@ -181,41 +187,35 @@
         <field name="start_datetime" formElement="date">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">action</item>
+                    <item name="dataType" xsi:type="string">string</item>
+                    <item name="label" xsi:type="string" translate="true">Start Action</item>
+                    <item name="formElement" xsi:type="string">date</item>
+                    <item name="options" xsi:type="array">
+                        <item name="timeFormat" xsi:type="string">HH:mm</item>
+                        <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
+                        <item name="showsTime" xsi:type="boolean">true</item>
+                    </item>
                 </item>
             </argument>
             <settings>
-                <!--<validation>-->
-                    <!--<rule name="required-entry" xsi:type="boolean">true</rule>-->
-                <!--</validation>-->
-                <dataType>text</dataType>
-                <label translate="true">Start Action</label>
-                <visible>true</visible>
-                <dataScope>start_datetime</dataScope>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
             </settings>
-            <formElements>
-                <date>
-                    <settings>
-                        <options>
-                            <option name="timeFormat" xsi:type="string">h:mm:ss A</option>
-                            <option name="dateFormat" xsi:type="string">MMM d, YYYY</option>
-                            <option name="showsTime" xsi:type="boolean">true</option>
-                        </options>
-                    </settings>
-                </date>
-            </formElements>
         </field>
         <field name="end_datetime" formElement="date">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">action</item>
+                    <item name="dataType" xsi:type="string">string</item>
+                    <item name="label" xsi:type="string" translate="true">End Action</item>
+                    <item name="formElement" xsi:type="string">date</item>
+                    <item name="options" xsi:type="array">
+                        <item name="timeFormat" xsi:type="string">HH:mm</item>
+                        <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
+                        <item name="showsTime" xsi:type="boolean">true</item>
+                    </item>
                 </item>
             </argument>
-            <settings>
-                <dataType>text</dataType>
-                <label translate="true">End Action</label>
-                <dataScope>end_datetime</dataScope>
-            </settings>
             <formElements>
                 <date>
                     <settings>

@@ -2,26 +2,50 @@
 
 namespace Puga\Action\Cron;
 
+use Puga\Action\Model\ActionFactory;
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+
 class Action
 {
+    /**
+     * @var ActionFactory
+     */
+    private $_actionFactory;
 
     /**
-     * @var \Magento\Framework\Locale\ResolverInterface
+     * Action constructor.
+     * @param ActionFactory $_actionFactory
      */
-    protected $_localeResolver;
+    public function __construct(ActionFactory $_actionFactory)
+    {
+        $this->_actionFactory = $_actionFactory;
+    }
 
     /**
-     * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
+     * @return AbstractCollection
      */
-    protected $_localeDate;
-
     public function execute()
     {
-
-        $this->_localeResolver->emulate(0);
-        $currentDate = $this->_localeDate->date();
-
-        return $this;
-
+        $actions = $this->_actionFactory->create()->getCollection()
+            ->addFieldToFilter('is_active', 1);
+        foreach ($actions->getItems() as $actionData) {
+            $action = $actionData->getData();
+            if ($actionData->getData('start_datetime') == date('Y-m-d H:i')) {
+            $action['status'] = 2;
+            $actions->getResource()->getConnection()->update(
+                $actions->getResource()->getTable('puga_action_action'),
+                $action,
+                $actions->getResource()->getConnection()->quoteInto('id = ?', $action['id']));
+            }
+            if ($actionData->getData('end_datetime') == date('Y-m-d H:i')) {
+                $action = $actionData->getData();
+                $action['status'] = 3;
+                $actions->getResource()->getConnection()->update(
+                    $actions->getResource()->getTable('puga_action_action'),
+                    $action,
+                    $actions->getResource()->getConnection()->quoteInto('id = ?', $action['id']));
+            }
+        }
+        return $actions;
     }
 }
