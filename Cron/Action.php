@@ -30,14 +30,17 @@ class Action
             ->addFieldToFilter('is_active', 1);
         foreach ($actions->getItems() as $actionData) {
             $action = $actionData->getData();
-            if ($actionData->getData('start_datetime') == date('Y-m-d H:i')) {
+            $startTime = strtotime($actionData->getData('start_datetime'));
+            $endTime = strtotime($actionData->getData('end_datetime'));
+            $date = strtotime(date('Y-m-d H:i'));
+            if ($startTime >= $date) {
             $action['status'] = 2;
             $actions->getResource()->getConnection()->update(
                 $actions->getResource()->getTable('puga_action_action'),
                 $action,
                 $actions->getResource()->getConnection()->quoteInto('id = ?', $action['id']));
             }
-            if ($actionData->getData('end_datetime') == date('Y-m-d H:i')) {
+            if ($endTime > $date) {
                 $action = $actionData->getData();
                 $action['status'] = 3;
                 $actions->getResource()->getConnection()->update(

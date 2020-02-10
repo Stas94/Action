@@ -44,20 +44,13 @@ class ImageUploader
     protected $basePath;
 
     /**
-     * Allowed extensions
-     *
-     * @var string
-     */
-    protected $allowedExtensions;
-
-    /**
      * List of allowed image mime types
      *
      * @var string[]
      */
     private $allowedMimeTypes;
 
-    const FILE_DIR = 'action/image';
+    const FILE_DIR = 'puga/action/image';
 
     /**
      * ImageUploader constructor
@@ -66,7 +59,6 @@ class ImageUploader
      * @param UploaderFactory $uploaderFactory
      * @param StoreManagerInterface $storeManager
      * @param string $basePath
-     * @param string[] $allowedExtensions
      * @param string[] $allowedMimeTypes
      * @throws \Magento\Framework\Exception\FileSystemException
      */
@@ -75,29 +67,14 @@ class ImageUploader
         UploaderFactory $uploaderFactory,
         StoreManagerInterface $storeManager,
         $basePath,
-        $allowedExtensions,
         $allowedMimeTypes = []
     ) {
         $this->mediaDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
         $this->uploaderFactory = $uploaderFactory;
         $this->storeManager = $storeManager;
         $this->basePath = $basePath;
-        $this->allowedExtensions = $allowedExtensions;
         $this->allowedMimeTypes = $allowedMimeTypes;
     }
-
-    /**
-     * Set allowed extensions
-     *
-     * @param string[] $allowedExtensions
-     *
-     * @return void
-     */
-    public function setAllowedExtensions($allowedExtensions)
-    {
-        $this->allowedExtensions = $allowedExtensions;
-    }
-
 
     /**
      * Retrieve temp media url
@@ -123,17 +100,6 @@ class ImageUploader
     }
 
     /**
-     * Retrieve allowed extensions
-     *
-     * @return string[]
-     */
-    public function getAllowedExtensions()
-    {
-        return $this->allowedExtensions;
-    }
-
-
-    /**
      * Checking file for save and save it to tmp dir
      *
      * @param string $fileId
@@ -146,7 +112,7 @@ class ImageUploader
     {
         /** @var \Magento\MediaStorage\Model\File\Uploader $uploader */
         $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
-        $uploader->setAllowedExtensions($this->getAllowedExtensions());
+        $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
         $uploader->setAllowRenameFiles(true);
         if (!$uploader->checkMimeType($this->allowedMimeTypes)) {
             throw new LocalizedException(__('File validation failed.'));

@@ -44,7 +44,7 @@ class Action extends \Magento\Framework\View\Element\Template
     {
         $collection = $this->_actionFactory->create()->getCollection()
             ->addFieldToFilter('is_active', 1)
-            ->addFieldToFilter('start_datetime',['lteq' => '2020-03.01'])
+            ->addFieldToFilter('start_datetime',['lteq' => date('Y-m-d H:i')])
             ->setOrder('start_datetime');
         return $collection;
     }
@@ -61,7 +61,7 @@ class Action extends \Magento\Framework\View\Element\Template
             $image = $data['image'];
             $pageData['image'] = [
                 'name' => $image,
-                'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'action/image/' . $image
+                'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'puga/action/image/' . $image
             ];
             $data['image'] = $pageData['image'];
         }

@@ -86,7 +86,7 @@ class Action extends AbstractProduct
         if ($image) {
             $pageData['image'] = [
                 'name' => $image,
-                'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'action/image/' . $image
+                'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'puga/action/image/' . $image
             ];
             $action['image'] = $pageData['image'];
             return $action['image'];

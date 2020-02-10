@@ -56,7 +56,7 @@ class Thumbnail extends \Magento\Ui\Component\Listing\Columns\Column
             foreach ($dataSource['data']['items'] as & $item) {
                 $image = $item['image'];
                 $product = new \Magento\Framework\DataObject($item);
-                $url = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'action/image/' . $image;
+                $url = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'puga/action/image/' . $image;
                 $item[$fieldName . '_src'] = $url;
                 $item[$fieldName . '_alt'] = $image;
                 $item[$fieldName . '_link'] = $this->urlBuilder->getUrl(

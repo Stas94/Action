@@ -108,7 +108,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
                 $pageData['image'] = [
                     [
                         'name' => $image,
-                        'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'action/image/' . $image
+                        'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'puga/action/image/' . $image
                     ]
                 ];
             }

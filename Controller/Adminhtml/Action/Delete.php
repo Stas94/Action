@@ -15,6 +15,26 @@ class Delete extends \Magento\Backend\App\Action implements HttpPostActionInterf
 {
 
     /**
+     * @var \Puga\Action\Api\ActionRepositoryInterface
+     */
+    private $actionRepository;
+
+    /**
+     * Save constructor.
+     * @param Action\Context $context
+     * @param \Puga\Action\Api\ActionRepositoryInterface|null $actionRepository
+     */
+    public function __construct(
+        Action\Context $context,
+        \Puga\Action\Api\ActionRepositoryInterface $actionRepository = null
+    ) {
+        $this->actionRepository = $actionRepository
+            ?: \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Puga\Action\Api\ActionRepositoryInterface::class);
+        parent::__construct($context);
+    }
+
+    /**
      * Delete action
      *
      * @return \Magento\Backend\Model\View\Result\Redirect
@@ -24,7 +44,7 @@ class Delete extends \Magento\Backend\App\Action implements HttpPostActionInterf
         $id = $this->getRequest()->getParam('id');
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
-        
+
         if ($id) {
             try {
                 $model = $this->_objectManager->create(\Puga\Action\Model\Action::class);
@@ -35,7 +55,7 @@ class Delete extends \Magento\Backend\App\Action implements HttpPostActionInterf
                 $this->_eventManager->dispatch('adminhtml_pugaaction_on_delete', [
                     'status' => 'success'
                 ]);
-                
+
                 return $resultRedirect->setPath('*/*/');
             } catch (\Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
