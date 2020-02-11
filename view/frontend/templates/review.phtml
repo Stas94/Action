@@ -7,7 +7,7 @@
 /** @var Puga\Action\Block\Product\Action $block */
 
 $collection = $block->getCollection();
-$_helper = $this->helper(Puga\Action\Helper\Data);
+$_helper = $this->helper(Puga\Action\Helper\Data::class);
 $wight = '100px';
 $height = '100px';
 ?>
@@ -23,7 +23,7 @@ $height = '100px';
                         <h3 style="font-size: 12px; color: rgb(89, 89, 89);">До завершення акції</h3>
                         <div class="unit-container"
                              style="text-align: center; margin-top: -2px; display: inline-block; color: rgb(227, 24, 55)">
-                            <?php $date = $block->getDate($action); ?>
+                            <?php $date = $_helper->getDate($action); ?>
                             <?= $date ?>
                             <p class="unit"
                                style="clear: both; margin-top: -7px; font-size: 11px;">

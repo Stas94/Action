@@ -5,6 +5,7 @@ namespace Puga\Action\Helper;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
+use DateTime;
 class Data extends AbstractHelper
 {
     /**
@@ -16,11 +17,11 @@ class Data extends AbstractHelper
 
     /**
      * Action constructor.
-     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magento\Framework\App\Helper\Context $context,
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
-        \Magento\Framework\View\Element\Template\Context $context,
+        \Magento\Framework\App\Helper\Context $context,
         StoreManagerInterface $storeManager
     )
     {
@@ -50,5 +51,17 @@ class Data extends AbstractHelper
             }
         }
         return $data['image'];
+    }
+
+    /**
+     * @param $date
+     */
+    public function getDate($date)
+    {
+        $startDate = new DateTime($date['start_datetime']);
+        $endDate = new DateTime($date['end_datetime']);
+        $interval = $startDate->diff($endDate);
+
+        return $interval->days;
     }
 }
