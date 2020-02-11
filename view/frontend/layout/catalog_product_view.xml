@@ -9,7 +9,7 @@
     <update handle="review_product_form_component"/>
     <body>
         <referenceBlock name="product.info.details">
-            <block class="Puga\Action\Block\Action" name="action.tab" as="action" template="Puga_Action::review.phtml" group="detailed_info" ifconfig="catalog/review/active">
+            <block class="Puga\Action\Block\Product\Action" name="action.tab" as="action" template="Puga_Action::review.phtml" group="detailed_info" ifconfig="catalog/review/active">
                 <arguments>
                     <argument name="sort_order" xsi:type="string">40</argument>
                 </arguments>

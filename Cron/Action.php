@@ -33,14 +33,14 @@ class Action
             $startTime = strtotime($actionData->getData('start_datetime'));
             $endTime = strtotime($actionData->getData('end_datetime'));
             $date = strtotime(date('Y-m-d H:i'));
-            if ($startTime >= $date) {
+            if ($date >= $startTime) {
             $action['status'] = 2;
             $actions->getResource()->getConnection()->update(
                 $actions->getResource()->getTable('puga_action_action'),
                 $action,
                 $actions->getResource()->getConnection()->quoteInto('id = ?', $action['id']));
             }
-            if ($endTime > $date) {
+            if ($date >= $endTime && !empty($endTime)) {
                 $action = $actionData->getData();
                 $action['status'] = 3;
                 $actions->getResource()->getConnection()->update(

@@ -25,26 +25,35 @@ class Action extends Template implements IdentityInterface
     protected $_coreRegistry;
 
     /**
-     * Review resource model
+     * Action resource model
      *
-     * @var \Magento\Catalog\Model\ProductFactory
+     * @var \Puga\Action\Model\ResourceModel\Action
+     */
+    protected $_actionsResource;
+
+    /**
+     * Action model
+     *
+     * @var \Puga\Action\Model\ActionFactory
      */
     protected $_actionsColFactory;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Catalog\Model\ProductFactory $collectionFactory
+     * @param \Puga\Action\Model\ResourceModel\Action $collectionFactory
      * @param array $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Catalog\Model\ProductFactory $collectionFactory,
+        \Puga\Action\Model\ResourceModel\Action $_actionsResource,
+        \Puga\Action\Model\ActionFactory $_actionsColFactory,
         array $data = []
     ) {
         $this->_coreRegistry = $registry;
-        $this->_actionsColFactory = $collectionFactory;
+        $this->_actionsResource = $_actionsResource;
+        $this->_actionsColFactory = $_actionsColFactory;
         parent::__construct($context, $data);
 
         $this->setTabTitle();
@@ -84,8 +93,8 @@ class Action extends Template implements IdentityInterface
      */
     public function setTabTitle()
     {
-        $title = $this->getCollectionSize()
-            ? __('Actions %1', '<span class="counter">' . $this->getCollectionSize() . '</span>')
+        $title = $this->getCollection()
+            ? __('Actions %1', '<span class="counter">' . $this->getCollection()->getSize() . '</span>')
             : __('Actions');
         $this->setTitle($title);
     }
@@ -93,21 +102,15 @@ class Action extends Template implements IdentityInterface
     /**
      * Get size of reviews collection
      *
-     * @return int
+     * @return \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
      */
-    public function getCollectionSize()
+    public function getCollection()
     {
-        $collection = $this->_actionsColFactory->create()->getCollection();
-        $collection->addFieldToSelect('*')
-        ->joinField(
-            'action_id',
-            'puga_action_product',
-            'action_id',
-            'product_id=entity_id',
-            'action_id=' . (int)$this->getRequest()->getParam('id')
-        );
-
-        return $collection->getSize();
+        $productIds = $this->_actionsResource->getLinkedActions($this->getProductId());
+        $collection = $this->_actionsColFactory->create()->getCollection()
+            ->addFieldToFilter('is_active', array('eq' => 1))
+            ->addFieldToFilter('id', array('in' => $productIds));
+        return $collection;
     }
 
     /**

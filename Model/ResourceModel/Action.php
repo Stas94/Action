@@ -114,6 +114,25 @@ class Action extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Акції які прив'язані то товару
+     *
+     * @return array
+     */
+    public function getLinkedActions($productId)
+    {
+        $select = $this->getConnection()->select()->from(
+            $this->getTable('puga_action_product'),
+            array('action_id', 'action_id')
+        )->where(
+            "{$this->getTable('puga_action_product')}.product_id = ?",
+            $productId
+        );
+        $bind = array('product_id' => (int)$productId);
+
+        return $this->getConnection()->fetchPairs($select, $bind);
+    }
+
+    /**
      * Action product table name getter
      *
      * @return string
