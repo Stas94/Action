@@ -74,23 +74,4 @@ class Action extends AbstractProduct
         $actionId = $block->getActionCollection()->getItemById((int)$this->getRequest()->getParam('id'));
         $this->setData($actionId->getData());
     }
-
-    /**
-     * @param $action
-     * @return array
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getActionImage($action)
-    {
-        $image = $action['image'];
-        if ($image) {
-            $pageData['image'] = [
-                'name' => $image,
-                'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'puga/action/image/' . $image
-            ];
-            $action['image'] = $pageData['image'];
-            return $action['image'];
-        }
-        return $action;
-    }
 }

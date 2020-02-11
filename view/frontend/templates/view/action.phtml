@@ -8,16 +8,17 @@ $_helper = $this->helper(Magento\Catalog\Helper\Output::class);
 
 $wight = '300px';
 $height = '300px';
-$pos = $block->getPositioned()
+$pos = $block->getPositioned();
+$_helperAction = $this->helper(Puga\Action\Helper\Data::class);
 
 ?>
 
 <h2><?= $block->getName(); ?></h2>
 <?php // Product Image ?>
 <p class="short-description-action" style="display: inline-block;">
-    <?php $image = $block->getActionImage($block->getData())?>
+    <?php $image = $_helperAction->getImage($block)?>
     <img class="action-image-photo" style="width:<?= $wight ?>; height: <?= $height ?>; float: left;
-            margin: 7px 7px 7px 0;" src="<?= $image['url'] ?>"/>
+            margin: 7px 7px 7px 0;" src="<?= $image ?>"/>
     <?= $block->getShortDescription() ?>
 </p>
 

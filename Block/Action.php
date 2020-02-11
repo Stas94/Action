@@ -1,34 +1,28 @@
 <?php
 namespace Puga\Action\Block;
 
-use Magento\Framework\UrlInterface;
-use Magento\Store\Model\StoreManagerInterface;
-use DateTime;
-class Action extends \Magento\Framework\View\Element\Template
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
+use Puga\Action\Model\ActionFactory;
+
+class Action extends Template
 {
+    /**
+     * @var ActionFactory
+     */
     protected $_actionFactory;
 
     /**
-     * Store manager
-     *
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /**
      * Action constructor.
-     * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Puga\Action\Model\ActionFactory $_actionFactory
-     * @param StoreManagerInterface $storeManager
+     * @param Context $context
+     * @param ActionFactory $_actionFactory
      */
     public function __construct(
-        \Magento\Framework\View\Element\Template\Context $context,
-        \Puga\Action\Model\ActionFactory $_actionFactory,
-        StoreManagerInterface $storeManager
+        Context $context,
+        ActionFactory $_actionFactory
     )
     {
         $this->_actionFactory = $_actionFactory;
-        $this->storeManager = $storeManager;
         parent::__construct($context);
     }
 
@@ -47,42 +41,6 @@ class Action extends \Magento\Framework\View\Element\Template
             ->addFieldToFilter('start_datetime',['lteq' => date('Y-m-d H:i')])
             ->setOrder('start_datetime');
         return $collection;
-    }
-
-    /**
-     * @var $item
-     * @return string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getImage($item)
-    {
-        $data = $item->getData();
-        if (array_key_exists('image', $data) && $data['image']) {
-            $image = $data['image'];
-            $pageData['image'] = [
-                'name' => $image,
-                'url' => $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'puga/action/image/' . $image
-            ];
-            $data['image'] = $pageData['image'];
-        }
-        if (is_array($data['image'])) {
-            if ($data['image']['url']) {
-                return $url = $data['image']['url'];
-            }
-        }
-        return $data['image'];
-    }
-
-    /**
-     * @param $date
-     */
-    public function getDate($date)
-    {
-        $startDate = new DateTime($date['start_datetime']);
-        $endDate = new DateTime($date['end_datetime']);
-        $interval = $startDate->diff($endDate);
-
-        return $interval->days;
     }
 
     /**
