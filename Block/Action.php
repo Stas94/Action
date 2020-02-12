@@ -36,9 +36,13 @@ class Action extends Template
      */
     public function getActionCollection()
     {
+        $page = ($this->getRequest()->getParam('p')) ? $this->getRequest()->getParam('p') : 1;
+        $pageSize = ($this->getRequest()->getParam('limit')) ? $this->getRequest()->getParam('limit') : 5;
         $collection = $this->_actionFactory->create()->getCollection()
             ->addFieldToFilter('is_active', 1)
             ->addFieldToFilter('start_datetime',['lteq' => date('Y-m-d H:i')])
+            ->setPageSize($pageSize)
+            ->setCurPage($page)
             ->setOrder('start_datetime');
         return $collection;
     }
@@ -53,4 +57,23 @@ class Action extends Template
         return parent::getUrl($route, $params);
     }
 
+    /**
+     * Render pagination HTML
+     *
+     * @return string
+     */
+    public function getPagerHtml()
+    {
+        $pager = $this->getLayout()->createBlock(
+            'Magento\Theme\Block\Html\Pager',
+            'action_list_toolbar_pager'
+        )->setAvailableLimit([5 => 5, 10 => 10, 15 => 15, 20 => 20])
+            ->setShowPerPage(true)->setCollection(
+                $this->getActionCollection()
+            );
+        $this->setChild('pager', $pager);
+        $this->getActionCollection()->load();
+
+        return $this->getChildHtml('pager');
+    }
 }

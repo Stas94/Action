@@ -5,7 +5,6 @@
  */
 namespace Puga\Action\Block\Product;
 
-use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\View\Element\Template;
 
 /**
@@ -15,7 +14,7 @@ use Magento\Framework\View\Element\Template;
  * @author     Magento Core Team <core@magentocommerce.com>
  * @since 100.0.2
  */
-class Action extends Template implements IdentityInterface
+class Action extends Template
 {
     /**
      * Core registry
@@ -71,22 +70,6 @@ class Action extends Template implements IdentityInterface
     }
 
     /**
-     * Get URL for ajax call
-     *
-     * @return string
-     */
-    public function getProductReviewUrl()
-    {
-        return $this->getUrl(
-            'review/product/listAjax',
-            [
-                '_secure' => $this->getRequest()->isSecure(),
-                'id' => $this->getProductId(),
-            ]
-        );
-    }
-
-    /**
      * Set tab title
      *
      * @return void
@@ -111,15 +94,5 @@ class Action extends Template implements IdentityInterface
             ->addFieldToFilter('is_active', array('eq' => 1))
             ->addFieldToFilter('id', array('in' => $productIds));
         return $collection;
-    }
-
-    /**
-     * Return unique ID(s) for each object in system
-     *
-     * @return array
-     */
-    public function getIdentities()
-    {
-        return [\Magento\Review\Model\Review::CACHE_TAG];
     }
 }

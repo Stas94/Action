@@ -10,6 +10,11 @@ $wight = '200px';
 $height = '200px';
 ?>
 <h1><?= _('Action') ?></h1>
+<?php if ($blocks->getSize()) :?>
+    <div class="order-products-toolbar toolbar bottom">
+        <?= $block->getPagerHtml() ?>
+    </div>
+<?php endif ?>
 <?php foreach ($blocks as $key => $item) : ?>
     <div style="display: flow-root;">
         <div class="right" style="float: right !important;">
@@ -44,3 +49,8 @@ $height = '200px';
         </p>
     </div>
 <?php endforeach; ?>
+<?php if ($blocks->getSize()) :?>
+    <div class="order-products-toolbar toolbar bottom">
+        <?= $block->getChildHtml('pager') ?>
+    </div>
+<?php endif ?>
