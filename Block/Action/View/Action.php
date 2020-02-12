@@ -4,11 +4,17 @@ namespace Puga\Action\Block\Action\View;
 
 use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 class Action extends AbstractProduct
 {
+    /**
+     * Core registry
+     *
+     * @var \Magento\Framework\Registry
+     */
+    protected $_coreRegistry;
+
     /**
      * @var ProductFactory
      */
@@ -24,16 +30,19 @@ class Action extends AbstractProduct
     /**
      * Action constructor.
      * @param \Magento\Catalog\Block\Product\Context $context
+     * @param \Magento\Framework\Registry $registry
      * @param \Magento\Catalog\Model\ProductFactory $_productFactory
      * @param  StoreManagerInterface $storeManager
      */
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         \Magento\Catalog\Model\ProductFactory $_productFactory,
+        \Magento\Framework\Registry $registry,
         StoreManagerInterface $storeManager
     )
     {
         $this->_productFactory = $_productFactory;
+        $this->_coreRegistry = $registry;
         $this->storeManager = $storeManager;
         parent::__construct($context);
     }
@@ -43,6 +52,17 @@ class Action extends AbstractProduct
         $this->_prepareLayout();
     }
 
+    /**
+     * Get current action
+     *
+     * @return null|int
+     */
+    public function getAction()
+    {
+        $action = $this->_coreRegistry->registry('puga_action');
+        return $action;
+
+    }
 
     /**
      * @var \Magento\Catalog\Model\ProductFactory $_productFactory
@@ -70,8 +90,7 @@ class Action extends AbstractProduct
     {
         parent::_prepareLayout();
 
-        $block = $this->getLayout()->createBlock(\Puga\Action\Block\Action::class);
-        $actionId = $block->getActionCollection()->getItemById((int)$this->getRequest()->getParam('id'));
-        $this->setData($actionId->getData());
+        $action = $this->getAction();
+        $this->setData($action->getData());
     }
 }
