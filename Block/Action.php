@@ -68,7 +68,7 @@ class Action extends Template
             'Magento\Theme\Block\Html\Pager',
             'action_list_toolbar_pager'
         )->setAvailableLimit([5 => 5, 10 => 10, 15 => 15, 20 => 20])
-            ->setShowPerPage(true)->setCollection(
+            ->setShowPerPage(false)->setCollection(
                 $this->getActionCollection()
             );
         $this->setChild('pager', $pager);
