@@ -37,13 +37,6 @@ class ImageUploader
     protected $storeManager;
 
     /**
-     * Base path
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
      * List of allowed image mime types
      *
      * @var string[]
@@ -58,7 +51,6 @@ class ImageUploader
      * @param Filesystem $filesystem
      * @param UploaderFactory $uploaderFactory
      * @param StoreManagerInterface $storeManager
-     * @param string $basePath
      * @param string[] $allowedMimeTypes
      * @throws \Magento\Framework\Exception\FileSystemException
      */
@@ -66,13 +58,11 @@ class ImageUploader
         Filesystem $filesystem,
         UploaderFactory $uploaderFactory,
         StoreManagerInterface $storeManager,
-        $basePath,
         $allowedMimeTypes = []
     ) {
         $this->mediaDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
         $this->uploaderFactory = $uploaderFactory;
         $this->storeManager = $storeManager;
-        $this->basePath = $basePath;
         $this->allowedMimeTypes = $allowedMimeTypes;
     }
 

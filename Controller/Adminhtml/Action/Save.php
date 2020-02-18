@@ -5,25 +5,18 @@
  */
 namespace Puga\Action\Controller\Adminhtml\Action;
 
-use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Backend\App\Action;
 use Magento\Framework\Exception\LocalizedException;
-use Puga\Action\Model\ImageUploader;
 
 /**
  * Save CMS page action.
  */
-class Save extends \Magento\Backend\App\Action implements HttpPostActionInterface
+class Save extends Action
 {
     /**
      * @var \Puga\Action\Model\ActionFactory
      */
     private $actionFactory;
-
-    /**
-     * @var ImageUploader
-     */
-    private $imageUploader;
 
     /**
      * @var \Puga\Action\Api\ActionRepositoryInterface
@@ -35,16 +28,12 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
      * @param Action\Context $context
      * @param \Puga\Action\Model\ActionFactory|null $actionFactory
      * @param \Puga\Action\Api\ActionRepositoryInterface|null $actionRepository
-     * @param \Puga\Action\Model\ImageUploader $imageUpload = null
      */
     public function __construct(
         Action\Context $context,
         \Puga\Action\Model\ActionFactory $actionFactory = null,
-        \Puga\Action\Api\ActionRepositoryInterface $actionRepository = null,
-        \Puga\Action\Model\ImageUploader $imageUpload = null
+        \Puga\Action\Api\ActionRepositoryInterface $actionRepository = null
     ) {
-        $this->imageUploader = $imageUpload
-            ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ImageUploader::class);
         $this->actionFactory = $actionFactory
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Puga\Action\Model\ActionFactory::class);
         $this->actionRepository = $actionRepository
